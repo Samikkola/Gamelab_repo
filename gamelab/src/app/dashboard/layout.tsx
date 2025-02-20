@@ -1,4 +1,5 @@
 import { Geist, Geist_Mono } from "next/font/google";
+import { ReactNode } from "react";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -10,18 +11,19 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-export default function Layout({
-    children,
-  }: Readonly<{
-    children: React.ReactNode;
-  }>) {
-    return (
-      <html lang="en">
-        <body
-          className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-        >
-          {children}
-        </body>
-      </html>
-    );
-  }
+export default function RootLayout({ 
+  children
+ }: {
+   children: ReactNode 
+  }) {
+  return (
+    <html lang="fi">
+      <body>
+        <div className="flex h-screen">    
+          {/* <SideNav />  */}          
+          <div className="w-3/4 p-6">{children}</div>
+        </div>
+      </body>
+    </html>
+  );
+}
