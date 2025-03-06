@@ -4,9 +4,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace gamelab.src.server.Models
 {
-    /// <summary>
-    /// Malli User-Taululle
-    /// </summary>
+   
     [Table("Users")]
     public class UserModel
     {
@@ -16,6 +14,6 @@ namespace gamelab.src.server.Models
         public string? Username { get; set; }
         [Required]
         public string? Email { get; set; }
-        public List<String>? Reservations { get; set; }
+        public List<string>? Reservations { get; set; }
     }   
 }

@@ -12,10 +12,12 @@ namespace gamelab.src.server
 
         public DbSet<UserModel> Users { get; set; }
 
-       protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            modelBuilder.Entity<UserModel>();
-        }
+        public DbSet<Reservations> Reservations { get; set; }
+
+    //    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    //     {
+    //         modelBuilder.Entity<UserModel>();
+    //     }
 
     }
 
