@@ -1,5 +1,6 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import { ReactNode } from "react";
+import SideNav from "../components/SideNav";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -16,11 +17,12 @@ export default function RootLayout({
  }: {
    children: ReactNode 
   }) {
+    
   return (
-    <html lang="fi">
-      <body>
+    <html lang="fi" suppressHydrationWarning>
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`} suppressHydrationWarning>
         <div className="flex h-screen">    
-          {/* <SideNav />  */}          
+          <SideNav />           
           <div className="w-3/4 p-6">{children}</div>
         </div>
       </body>
