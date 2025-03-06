@@ -459,7 +459,11 @@
           "Microsoft.Extensions.Logging": "9.0.2"
         },
         "compile": {
+<<<<<<< HEAD
           "lib/net8.0/Microsoft.EntityFrameworkCore.Relational.dll": {
+=======
+          "lib/net8.0/_._": {
+>>>>>>> development
             "related": ".xml"
           }
         },
@@ -523,7 +527,11 @@
           "Microsoft.Extensions.Primitives": "9.0.2"
         },
         "compile": {
+<<<<<<< HEAD
           "lib/net9.0/Microsoft.Extensions.Configuration.Abstractions.dll": {
+=======
+          "lib/net9.0/_._": {
+>>>>>>> development
             "related": ".xml"
           }
         },
@@ -691,6 +699,7 @@
           "buildTransitive/Mono.TextTemplating.targets": {}
         }
       },
+<<<<<<< HEAD
       "Npgsql/9.0.3": {
         "type": "package",
         "dependencies": {
@@ -725,6 +734,8 @@
           }
         }
       },
+=======
+>>>>>>> development
       "System.CodeDom/6.0.0": {
         "type": "package",
         "compile": {
@@ -2448,6 +2459,7 @@
         "readme.md"
       ]
     },
+<<<<<<< HEAD
     "Npgsql/9.0.3": {
       "sha512": "tPvY61CxOAWxNsKLEBg+oR646X4Bc8UmyQ/tJszL/7mEmIXQnnBhVJZrZEEUv0Bstu0mEsHZD5At3EO8zQRAYw==",
       "type": "package",
@@ -2480,6 +2492,8 @@
         "postgresql.png"
       ]
     },
+=======
+>>>>>>> development
     "System.CodeDom/6.0.0": {
       "sha512": "CPc6tWO1LAer3IzfZufDBRL+UZQcj5uS207NHALQzP84Vp/z6wF0Aa0YZImOQY8iStY0A2zI/e3ihKNPfUm8XA==",
       "type": "package",
@@ -2873,8 +2887,12 @@
     "net9.0": [
       "Microsoft.AspNetCore.OpenApi >= 9.0.2",
       "Microsoft.EntityFrameworkCore >= 9.0.2",
+<<<<<<< HEAD
       "Microsoft.EntityFrameworkCore.Tools >= 9.0.2",
       "Npgsql.EntityFrameworkCore.PostgreSQL >= 9.0.4"
+=======
+      "Microsoft.EntityFrameworkCore.Tools >= 9.0.2"
+>>>>>>> development
     ]
   },
   "packageFolders": {
@@ -2941,10 +2959,13 @@
             "suppressParent": "All",
             "target": "Package",
             "version": "[9.0.2, )"
+<<<<<<< HEAD
           },
           "Npgsql.EntityFrameworkCore.PostgreSQL": {
             "target": "Package",
             "version": "[9.0.4, )"
+=======
+>>>>>>> development
           }
         },
         "imports": [
