@@ -12,7 +12,7 @@ const SideNav = () => {
   const pathname = usePathname();
 
   return (
-    <aside className="w-64 h-screen bg-gray-900 text-white p-4 fixed">
+    <aside className="w-64 h-screen bg-yellow-500 text-white p-4 fixed">
       <h2 className="text-2xl font-bold mb-6">GameLab</h2>
       <nav>
         <ul>
