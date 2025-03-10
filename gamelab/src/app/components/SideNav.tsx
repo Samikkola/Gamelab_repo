@@ -12,8 +12,8 @@ const SideNav = () => {
   const pathname = usePathname();
 
   return (
-    <aside className="w-64 h-screen bg-yellow-500 text-white p-4 fixed">
-      <h2 className="text-2xl font-bold mb-6">GameLab</h2>
+    <aside className="w-64 h-screen bg-yellow-500 text-black p-4 fixed left-0 top-24">
+      <h2 className="text-2xl font-bold mb-6">Navigation</h2>
       <nav>
         <ul>
           {menuItems.map((item) => (
@@ -21,7 +21,7 @@ const SideNav = () => {
               <Link
                 href={item.href}
                 className={`flex items-center gap-3 p-3 rounded-lg ${
-                  pathname === item.href ? "bg-gray-700" : "hover:bg-gray-800"
+                  pathname === item.href ? "bg-gray-400 text-white" : "hover:bg-gray-500 hover:text-white"
                 }`}
               >
                 <span>{item.icon}</span> {item.name}
