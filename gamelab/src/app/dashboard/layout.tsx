@@ -16,8 +16,8 @@ const geistMono = Geist_Mono({
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="fi" suppressHydrationWarning>
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`} suppressHydrationWarning>
-        
+      <body className={`bg-white text-black antialiased min-h-screen ${geistSans.variable} ${geistMono.variable}`} suppressHydrationWarning>
+
         {/* 🔹 Kiinteä Header */}
         <Header />
 
