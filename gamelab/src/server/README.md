@@ -2,10 +2,16 @@
 
 Serverin rakenne on seuraava:
 
-* `Program.cs`: Täältä käynnistetään sovellus.
-* `Models`: Täällä on kaikki mallit, jotka kuvastavat tietokannan tietomalleja.
-* `AppDbContext.cs`: Tämä on luokka, joka vastaa tietokannan yhteydenpitoa.
-* `Controllers`: Täällä on kaikki kontrollerit, jotka hoitavat pyyntöjen käsittelyn.
-* `appsettings.json`: Täällä on kaikki sovelluksen asetukset, jotka voidaan määrittää.
-* `appsettings.Development.json`: Täällä on kaikki sovelluksen asetukset, jotka voidaan määrittää kehitystilassa.
+* `Program.cs`: Täältä käynnistetään sovellus ja määritellään asetuksia.
+* `Models`: Mallit, jotka kuvastavat tietokannan tietomalleja.
+* `AppDbContext.cs`: Luokka, joka vastaa tietokannan yhteydenpitoa.
+* `Controllers`: Kontrollerit, jotka hoitavat pyyntöjen käsittelyn.
+* `appsettings.json`: Sovelluksen asetuksia mm. DefaultConnection
+* `appsettings.Development.json`: Kehitystilan asteuksia
+
+# Asennetut NuGet paketit:
+
+Microsoft.EntityFrameworkCore - Pääpaketti
+Npgsql.EntityFrameworkCore.PostgreSQL - Tuki PostgreSQl:lle
+Microsoft.EntityFrameworkCore.Tools - Migraatiotyökalut 
 

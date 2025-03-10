@@ -3,8 +3,8 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace gamelab.src.server.Models
 {
-    [Table("Reservations")]
-    public class Reservations
+    [Table("Reservation")]
+    public class Reservation
     {
         [Key]
         public int Id { get; set; }
@@ -16,14 +16,16 @@ namespace gamelab.src.server.Models
         [ForeignKey("User")]
         public int UserId { get; set; }
 
+        public Computer? Computer { get; set; } 
+
+        public bool IsRoomReservation { get; set; } = false; // Voidaan määrittää huonevaraus, jolloin ykisttäistä tietokonetta ei voida varata
+
         [Required]
         public DateTimeOffset StartDate { get; set; }
 
         [Required]
         public DateTimeOffset EndDate { get; set; }
 
-        // Miten tallennetaan tila tai laite joka on varattu?
-        // public int DeviceId { get; set; } ?
 
     }
 }

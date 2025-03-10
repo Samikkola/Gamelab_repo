@@ -4,6 +4,13 @@ using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace gamelab.src.server.Models
 {
+
+    public enum UserRole
+    {
+        Admin,
+        Student
+    }
+
     [Table("Users")]
     public class UserModel
     {
@@ -14,8 +21,8 @@ namespace gamelab.src.server.Models
         [Required]
         public string? Email { get; set; }
         [Required]
-        public ICollection<Reservations>? Reservations { get; set; }
+        public ICollection<Reservation>? Reservations { get; set; }
         [Required]
-        public bool IsAdmin { get; set; }
+        public UserRole Role { get; set; } = UserRole.Student; //Oletuksena oppilas
     }   
 }
