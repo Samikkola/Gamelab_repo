@@ -1,11 +1,19 @@
 
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
-public class Room
+namespace gamelab.src.server.Models
 {
-    public int Id { get; set; }
-    
-    public int MaxComputers { get; set; } = 8; //Voidaan muokata tietokoneiden määrää
 
-    public ICollection<Computer>? Computers { get; set; } //Huoneessa olevat tietokoneet
+    [Table("Room")]
+    public class Room
+    {
+        [Key]
+        public int Id { get; set; }
 
+        public bool isAvailable { get; set; } = true; //Onko huone varattavissa
+
+        public ICollection<Computer>? Computers { get; set; } //Huoneessa olevat tietokoneet
+
+    }
 }

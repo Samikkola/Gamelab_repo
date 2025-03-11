@@ -11,17 +11,22 @@ namespace gamelab.src.server.Models
         Student
     }
 
-    [Table("Users")]
+    [Table("User")]
     public class UserModel
     {
         [Key]
         public int Id { get; set; }
+
         [Required] 
         public string? Username { get; set; }
+
         [Required]
+        [EmailAddress]
         public string? Email { get; set; }
+
         [Required]
-        public ICollection<Reservation>? Reservations { get; set; }
+        public ICollection<Reservation>? Reservation { get; set; } = new List<Reservation>();
+        
         [Required]
         public UserRole Role { get; set; } = UserRole.Student; //Oletuksena oppilas
     }   
