@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 const menuItems = [
   { name: "Frontpage", href: "/dashboard", icon: "🏠" },
   { name: "Userpage", href: "/dashboard/userpage", icon: "👤" },
+  { name: "Adminpage", href: "/dashboard/adminpage", icon: "👥" },
 ];
 
 const SideNav = () => {
