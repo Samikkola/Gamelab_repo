@@ -13,11 +13,11 @@ namespace gamelab.src.server.Controllers
     public class UserController : ControllerBase
     {
         private readonly AppDbContext _context;
-        
-    /// <summary>
-    /// Konstruktori UserControllerille joka saa parametrina AppDbContextin 
-    /// </summary>
-    /// <param name="context"></param>
+
+        /// <summary>
+        /// Konstruktori UserControllerille joka saa parametrina AppDbContextin 
+        /// </summary>
+        /// <param name="context"></param>
         public UserController(AppDbContext context)
         {
             _context = context;
@@ -32,7 +32,7 @@ namespace gamelab.src.server.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetReservationsByUserId(int id)
         {
-            try 
+            try
             {
                 var reservations = await _context.Reservations
                 .Where(r => r.UserId == id)
@@ -44,7 +44,7 @@ namespace gamelab.src.server.Controllers
                 }
 
                 return Ok(reservations);
-            
+
             }
             catch (Exception e)
             {

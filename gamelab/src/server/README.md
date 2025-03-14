@@ -19,6 +19,7 @@ Microsoft.EntityFrameworkCore - Pääpaketti
 Npgsql.EntityFrameworkCore.PostgreSQL - Tuki PostgreSQl:lle
 Microsoft.EntityFrameworkCore.Tools - Migraatiotyökalut
 
+
 # Migraatio komennot joita käytetty
 
 dotnet ef migrations add InitialCreate
@@ -27,5 +28,5 @@ Loi ensimmäisen migraation nimeltä InitialCreate
 dotnet ef database update
 Päivittää tietokannan viimeisimmällä migraatiolla
 
-Kun tietokanta mallie on muokattu ja luodaan migraatioita, annetaan niille osuvat nimet jotta tiedetään mitä on muutettu, esim.
+Kun tietokanta mallia on muokattu ja luodaan migraatioita, annetaan niille osuvat nimet jotta tiedetään mitä on muutettu, esim.
 dotnet ef migrations add AddUserStatus
