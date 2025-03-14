@@ -13,6 +13,11 @@ Serverin rakenne on seuraava:
 - `appsettings.Development.json`: Kehitystilan asteuksia  
    HUOM! Tämä ei mene githubiin 
 
+# Kehitystyötä tehdessä
+
+Luotava appsettings.Developmnet.json tiedosto jonne tehtävä .env tiedostosta löytyvä DefaultConnection.
+## TODO Muutetaan toimimaan suoraan .env tiedostosta ##
+
 # Asennetut NuGet paketit:
 
 Microsoft.EntityFrameworkCore - Pääpaketti
