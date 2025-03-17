@@ -1,8 +1,13 @@
 
-//Sivu kirjautumisen jälkeen jossa näkyy kalenteri
+import CalendarComponent from "../components/Calendar";
+
 export default function Dashboard() {
-    return (
-      <h1></h1>
-    );
-  }
-  
+  return (
+    <div className="w-full flex">
+      <div className="ml-0"> {/* 🔹 Tämä pitää kalenterin vasemmalla */}
+        <CalendarComponent />
+      </div>
+    </div>
+  );
+}
+
