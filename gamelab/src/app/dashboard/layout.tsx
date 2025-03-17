@@ -1,5 +1,7 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import { ReactNode } from "react";
+import SideNav from "../components/SideNav";
+import Header from "../components/Header";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -11,18 +13,22 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-export default function RootLayout({ 
-  children
- }: {
-   children: ReactNode 
-  }) {
+export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="fi">
-      <body>
-        <div className="flex h-screen">    
-          {/* <SideNav />  */}          
-          <div className="w-3/4 p-6">{children}</div>
+    <html lang="fi" suppressHydrationWarning>
+      <body className={`bg-white text-black antialiased min-h-screen ${geistSans.variable} ${geistMono.variable}`} suppressHydrationWarning>
+
+        {/* 🔹 Kiinteä Header */}
+        <Header />
+
+        <div className="flex">
+          {/* 🔹 Sivupalkki siirretään alemmas pt-24:llä */}
+          <SideNav />
+
+          {/* 🔹 Sisältöalue siirretään alemmas ja oikealle */}
+          <main className="flex-1 ml-64 p-6 pt-24">{children}</main>
         </div>
+
       </body>
     </html>
   );
