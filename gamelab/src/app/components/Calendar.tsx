@@ -43,7 +43,7 @@ export default function CalendarComponent() {
   };
 
   return (
-    <div className="relative p-6 bg-white shadow-md rounded-lg mx-auto" style={{ maxWidth: "1100px" }}>
+    <div className="relative p-6 bg-white shadow-md rounded-lg mx-auto" style={{ maxWidth: "1200px" }}>
       <h2 className="text-2xl font-bold mb-4 text-gray-800 text-center">Varauskalenteri</h2>
 
       {selectedTimes.length > 0 && (
@@ -57,11 +57,12 @@ export default function CalendarComponent() {
         </div>
       )}
 
-      <div className="border border-gray-300 rounded-lg overflow-hidden mx-auto relative" style={{ width: "900px", height: "600px" }}>
+      <div className="border border-black border-width p-3 rounded-lg overflow-hidden mx-auto relative" style={{ width: "1100px", height: "650px" }}>
         <FullCalendar
           plugins={[timeGridPlugin, interactionPlugin]}
           initialView="timeGridWeek"
           dateClick={handleDateClick}
+          firstDay={1} // 🔹 Kalenteri alkaa maanantaista
           events={[
             ...events,
             ...selectedTimes.map(time => ({
@@ -90,16 +91,23 @@ export default function CalendarComponent() {
           editable={true}
           allDaySlot={false}
         />
-       {/* 🔹 Tässä oikea tapa lisätä CSS JSX:ssä */}
-        <style jsx>{`
-        :global(.fc-timegrid-slot) {
-        height: 45px !important;
-        }
-  `}</style>
+ {/* 🔹 Tässä oikea tapa lisätä CSS JSX:ssä */}
+<style jsx>{`
+  :global(.fc-timegrid-slot) {
+    height: 47px !important;
+    color: black !important;
+  }
+
+  :global(.fc-toolbar-title),  /* 🔹 Aikajakso esim. "Mar 16 – 22, 2025" */
+  :global(.fc-col-header-cell-cushion) {  /* 🔹 Päivämäärien teksti esim. "Mon, Tue, Wed" */
+    color: black !important;
+  }
+`}</style>
+
       </div>
 
       {/* 🔹 Varausmodaali */}
-     {/* 🔹 Varausmodaali */}
+     {/* 🔹 Varausmodaali */} 
 <Dialog 
   open={isModalOpen} 
   onClose={() => setIsModalOpen(false)} 
