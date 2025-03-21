@@ -20,28 +20,37 @@ namespace gamelab.src.server
             base.OnModelCreating(modelBuilder);
 
             //Määritellään tietokantataulut ja niiden väliset suhteet
+           
+            //UserModel <-> Reservation 1:n
             modelBuilder.Entity<UserModel>()
                 .HasMany(u => u.Reservation)
                 .WithOne(r => r.User)
-                .HasForeignKey(r => r.UserId);
-
-            modelBuilder.Entity<Reservation>()
-                .HasOne(r => r.User)
-                .WithMany(u => u.Reservation)
-                .HasForeignKey(r => r.UserId);  
-
+                .HasForeignKey(r => r.UserId)
+                .OnDelete(DeleteBehavior.Cascade);  // Poistetaan varaukset, jos käyttäjä poistetaan
+           
+            //Room <-> Computer 1:n
             modelBuilder.Entity<Room>()
                 .HasMany(r => r.Computers)
                 .WithOne(c => c.Room)
                 .HasForeignKey(c => c.RoomId);
-
+          
+            // Computer <-> Reservation 1:n
             modelBuilder.Entity<Computer>()
-                .HasOne(c => c.Room)
-                .WithMany(r => r.Computers)
-                .HasForeignKey(c => c.RoomId);
+                .HasMany(c => c.Reservations)
+                .WithOne(r => r.Computer)
+                .HasForeignKey(r => r.ComputerId);
+           
+            //Reservation <-> Computer 1:n
+            modelBuilder.Entity<Reservation>()
+                .HasOne(r => r.Computer)
+                .WithMany(c => c.Reservations)
+                .HasForeignKey(r => r.ComputerId);
+            
+            //Reservation <-> Room 1:n
+            modelBuilder.Entity<Reservation>()
+                .HasOne(r => r.Room)
+                .WithMany()
+                .HasForeignKey(r => r.RoomId);        
         }
-
     }
-
-
 }

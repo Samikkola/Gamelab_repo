@@ -24,4 +24,6 @@ public class Computer
     [Required]
     public bool isAvailable { get; set; } = true;
 
+    public ICollection<Reservation> Reservations { get; set; } = new List<Reservation>();
+
 }

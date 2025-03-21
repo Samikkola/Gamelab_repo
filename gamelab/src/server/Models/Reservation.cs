@@ -22,17 +22,19 @@ namespace gamelab.src.server.Models
         public int UserId { get; set; }
         public UserModel? User { get; set; } // Navigointi ominaisuus, tämä ilmeisesti on hyvä olla
 
+        public string? Description { get; set; } //Varauksen kuvaus
 
+        [ForeignKey("ComputerId")]
         public int? ComputerId { get; set; }
-        [ForeignKey("Computer")]
         public Computer? Computer { get; set; }//Navigointi ominaisuus, tämä ilmeisesti on hyvä olla
+       
+        [ForeignKey("RoomId")]
         public int? RoomId { get; set; }
-        [ForeignKey("Room")]
         public Room? Room { get; set; }//Navigointi ominaisuus, tämä ilmeisesti on hyvä olla
 
 
         [Required]
-        public ReservationType Type { get; set; } //Varauksen tyyppi
+        public ReservationType Type { get; set; } //Varauksen tyyppi (huone vai tietokone)
 
 
         [Required]
