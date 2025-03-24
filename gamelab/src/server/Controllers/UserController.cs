@@ -89,17 +89,23 @@ namespace gamelab.src.server.Controllers
         {
             try
             {
-                var reservationToUpdate = await _context.Reservations.FindAsync(id);
-
+                //Etsitään muokattava varaus tietokannasta
+                Reservation? reservationToUpdate = await _context.Reservations.FindAsync(id);
+                //Tarkistetaan löytyykö varaus
                 if (reservationToUpdate != null)
                 {
+                    //Päivitetään varauksen tiedo
+                    //TODO tarvitaanko tähän tarkistus että käyttäjä on muokannut kyseistä kohtaa?
+                    reservationToUpdate.ComputerId = reservationDto.ComputerId;
+                    reservationToUpdate.StartTime = reservationDto.StartDate;
+                    reservationToUpdate.EndTime = reservationDto.EndDate;
                     
                     await _context.SaveChangesAsync();
                     return Ok(reservationToUpdate);
                 }
                 else
                 {
-                    return NotFound();
+                    return NotFound(new { message = "Reservation not found" });
                 }
             }
             catch (Exception e)
@@ -113,8 +119,7 @@ namespace gamelab.src.server.Controllers
         /// </summary>
         public class EditReservation
         {
-            public int? ComputerId { get; set; }
-            public ReservationType Type { get; set; } //Varauksen tyyppi
+            public int ComputerId { get; set; }
             public DateTimeOffset StartDate { get; set; }
             public DateTimeOffset EndDate { get; set; }
         }

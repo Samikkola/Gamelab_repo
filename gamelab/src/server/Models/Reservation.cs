@@ -38,9 +38,9 @@ namespace gamelab.src.server.Models
 
 
         [Required]
-        public DateTimeOffset StartDate { get; set; }
+        public DateTimeOffset StartTime { get; set; }
         [Required]
-        public DateTimeOffset EndDate { get; set; }
+        public DateTimeOffset EndTime { get; set; }
 
     }
 }

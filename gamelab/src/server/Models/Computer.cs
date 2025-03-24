@@ -24,6 +24,7 @@ public class Computer
     [Required]
     public bool isAvailable { get; set; } = true;
 
-    public ICollection<Reservation> Reservations { get; set; } = new List<Reservation>();
+    public ICollection<Reservation>? Reservations { get; set; } //Navigoiti ominaisuus, tämä ilmeisesti on hyvä olla
+      
 
 }
