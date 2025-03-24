@@ -3,15 +3,23 @@
 Serverin rakenne on seuraava:
 
 - `Program.cs`: Täältä käynnistetään sovellus ja määritellään asetuksia.
+
 - `Models`: Mallit, jotka kuvastavat tietokannan tietomalleja.
+
 - `AppDbContext.cs`: Luokka, joka vastaa tietokannan yhteydenpitoa.
+
 - `Controllers`: Kontrollerit, jotka hoitavat pyyntöjen käsittelyn.
+
+- `Repositories`: Luokat, jotka vastaavat tietokannan operaatioista. Hoitaa datan tallentamisen ja hakemisen.
+
+- `Services`: Luokat, jotka vastaavat 
+liiketoimintalogiikasta. Hoitaa mm. logiikan ja validoinnin.
 
 - `appsettings.json`: Sovelluksen asetuksia
   HUOM! Tämä menee githubiin
 
-- `appsettings.Development.json`: Kehitystilan asteuksia  
-   HUOM! Tämä ei mene githubiin 
+- `appsettings.Development.json`: Kehitystilan asteuksia, mm. ConnectionString 
+  HUOM! Tämä ei mene githubiin 
 
 # Kehitystyötä tehdessä
 
@@ -35,3 +43,5 @@ Päivittää tietokannan viimeisimmällä migraatiolla
 
 Kun tietokanta mallia on muokattu ja luodaan migraatioita, annetaan niille osuvat nimet jotta tiedetään mitä on muutettu, esim.
 dotnet ef migrations add AddUserStatus
+
+

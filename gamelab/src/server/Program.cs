@@ -1,18 +1,33 @@
 
+using System.Text.Json.Serialization;
+using gamelab.Services;
 using gamelab.src.server;
+using gamelab.src.server.Services;
 using Microsoft.EntityFrameworkCore;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
-//Lisätään kontrollerit
-builder.Services.AddControllers();
+//Lisätään kontrollerit ja Json sterilisaatio ( enum -> string)
+builder.Services
+    .AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+    });
 
 //Luodaan yhteys tietokantaan
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<AppDbContext>(options => 
     options.UseNpgsql(connectionString));
+    
 
-//Lisätään tuki swaggerille
+//Rekisteröidään palvelut (Depency Injection)
+builder.Services.AddScoped<IReservationService, ReservationService>();
+builder.Services.AddScoped<IReservationRepository, ReservationRepository>();
+
+
+//Lisätään tuki swaggerilles
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 

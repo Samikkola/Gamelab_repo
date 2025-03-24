@@ -24,7 +24,6 @@ namespace gamelab.src.server.Models
         [EmailAddress]
         public string? Email { get; set; }
 
-        [Required]
         public ICollection<Reservation>? Reservation { get; set; } //Navigointi ominaisuus, tämä ilmeisesti on hyvä olla
         
         [Required]
