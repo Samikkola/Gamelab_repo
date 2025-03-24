@@ -25,7 +25,7 @@ namespace gamelab.src.server.Models
         public string? Email { get; set; }
 
         [Required]
-        public ICollection<Reservation>? Reservation { get; set; } = new List<Reservation>();
+        public ICollection<Reservation>? Reservation { get; set; } //Navigointi ominaisuus, tämä ilmeisesti on hyvä olla
         
         [Required]
         public UserRole Role { get; set; } = UserRole.Student; //Oletuksena oppilas

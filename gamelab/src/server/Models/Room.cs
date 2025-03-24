@@ -13,7 +13,7 @@ namespace gamelab.src.server.Models
 
         public bool isAvailable { get; set; } = true; //Onko huone varattavissa
 
-        public ICollection<Computer>? Computers { get; set; } //Huoneessa olevat tietokoneet
+        public ICollection<Computer>? Computers { get; set; }  //Huoneessa olevat tietokoneet
 
     }
 }
