@@ -6,12 +6,13 @@ import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin, { DateClickArg } from "@fullcalendar/interaction";
 import { v4 as uuidv4 } from "uuid";
 import Modal from "./Modal"; // 🔹 Nyt modaali on erillinen komponentti
+import fiLocale from "@fullcalendar/core/locales/fi";
 
 export default function CalendarComponent() {
   const [selectedTimes, setSelectedTimes] = useState<{ start: string; end: string; id: string }[]>([]);
   const [reservationName, setReservationName] = useState("");
-  const [userEmail, setUserEmail] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [computerId, setComputerId] = useState<number>(0);
 
   const events = [
     { title: "Tietokone varattu", start: "2025-03-04T10:00:00", end: "2025-03-04T11:00:00", color: "blue", id: uuidv4() },
@@ -85,6 +86,7 @@ export default function CalendarComponent() {
           plugins={[timeGridPlugin, interactionPlugin]}
           initialView="timeGridWeek"
           dateClick={handleDateClick}
+          locale={fiLocale} // Muuttaa päivämäärämuotoa suomeksi
           firstDay={1}
           events={[
             ...events,
@@ -130,8 +132,9 @@ export default function CalendarComponent() {
         setSelectedTimes={setSelectedTimes}
         reservationName={reservationName}
         setReservationName={setReservationName}
-        userEmail={userEmail}
-        setUserEmail={setUserEmail}
+     
+        computerId={computerId}
+        setComputerId={setComputerId}
       />
     </div>
   );
