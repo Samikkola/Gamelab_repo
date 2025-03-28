@@ -1,7 +1,8 @@
 "use client";
-
+import Image from 'next/image';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+
 
 const LoginPage = () => {
     const [username, setUsername] = useState('');
@@ -25,9 +26,22 @@ const LoginPage = () => {
     return (
       <div className="flex flex-col h-screen">
         {/* Keltainen palkki sivun ylälaidassa */}
-        <div className="bg-yellow-500 p-7">
-          <h1 className="text-4xl font-bold text-black text-left">Xamk Gamelab</h1>
-        </div>
+        <header className="bg-xamkYellow h-[100px] sm:h-[100px] w-full fixed top-0 left-0 z-50 flex items-center gap-4 px-6">
+              
+              {/* Kuva-wrapperi: suhteellinen elementti, jotta next/image fill toimii oikein */}
+              <div className="relative w-[120px] h-[100px]">
+                <Image
+                  src="/images/image.png"      // Kuvan polku public-kansiosta
+                  alt="Gamelab Logo"           // Alt-teksti saavutettavuutta varten
+                  fill                         // Täyttää koko wrapperin
+                  className="object-contain"   // Skaalaa niin että kuva ei leikkaannu
+                  priority                     // Ladataan etusijalla
+                />
+              </div>
+        
+              {/* Sovelluksen otsikko */}
+              <h1 className="text-4xl font-bold text-black">Gamelab</h1>
+            </header>
   
         <div className="flex flex-col items-center justify-center flex-grow bg-gray-100">
           <h1 className="text-2xl mb-4 text-black">Login to Xamk Gamelab varausjärjestelmä</h1>
@@ -44,7 +58,7 @@ const LoginPage = () => {
                 required
               />
             </div>
-  
+            
             <div className="mb-4">
               <label htmlFor="password" className="block mb-2 text-black text-xl">Password</label>
               <input
