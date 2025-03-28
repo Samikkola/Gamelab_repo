@@ -46,6 +46,15 @@ builder.Services.AddCors(options =>
 //Luodaan/rakennetaan WebApplication
 var app = builder.Build();
 
+//Luodaan tietokanta DataSeeder- tiedososta 
+//ja alustetaan se, jos se ei ole vielä olemassa
+using (var scope = app.Services.CreateScope())
+{
+    var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    await DataSeeder.SeedAsync(context);
+}
+
+
 //Otetaan Swagger käyttöön kehitystilassa
 if (app.Environment.IsDevelopment())
 {

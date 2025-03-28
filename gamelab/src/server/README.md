@@ -1,12 +1,12 @@
 # Serverin rakenne
 
-- `Controllers`: Kontrollerit, jotka hoitavat HTTP-pyyntöjen välittämisen Servicelle.
+- `Controllers`: Kontrollerit, jotka hoitavat HTTP-pyyntöjen välittämisen Servicelle (CRUD-toiminnot).
 
 -`Migrations` : Migraatio-tiedostot, jotka generoituvat automaattisesti migraatioita tehdessä
 
 - `Models`: Mallit, jotka kuvastavat tietokannan tietomalleja.
 
-- `Repositories`: Luokat, jotka vastaavat tietokannan kanssa kommunikoinnista. Hoitaa datan tallentamisen ja hakemisen (CRUD-toiminnot).
+- `Repositories`: Luokat, jotka vastaavat tietokannan kanssa kommunikoinnista. Hoitaa datan tallentamisen ja hakemisen.
 
 - `Services`: Luokat, jotka vastaavat
   liiketoimintalogiikasta ja käsittelee pyynnöt jotka tulevat Controllerilta ja vie ne Repositorylle. Hoitaa mm. logiikan ja validoinnin.
@@ -18,6 +18,8 @@
 
 - `appsettings.Development.json`: Kehitystilan asteuksia, mm. ConnectionString
   HUOM! Tämä ei mene githubiin
+
+- `DataSeeder.cs` : Joka luo tietokantaan datan ( huoneen, tietokoneet ja testikäyttäjän)
 
   - `Program.cs`: Täältä käynnistetään sovellus ja määritellään asetuksia.
 
