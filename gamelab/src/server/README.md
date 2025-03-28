@@ -46,3 +46,8 @@ Päivittää tietokannan viimeisimmällä migraatiolla
 
 Kun tietokanta mallia on muokattu ja luodaan migraatioita, annetaan niille osuvat nimet jotta tiedetään mitä on muutettu, esim.
 dotnet ef migrations add AddUserStatus
+
+***Tällä hetkellä varauksen tallentamien toimii siten, että userId on kovakoodattuna handeleSaveReservation -funktiossa Modal -komponentissa.
+Mikäli tietokannassa ei kyseistä id:tä löydy, ei sovellus toimi. PgAdminilla voi tarkastaa mitä id:itä tietokanta sisältää.
+Muistettava myös aina tarkistaa ConnectionString jotta tietokantaan saadaan yhteys
+ja päivittää tietokanta dotnet ef database update -komennolla mikäli sovellus ei toimi.***
