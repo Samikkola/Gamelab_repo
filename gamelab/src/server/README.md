@@ -14,20 +14,16 @@
 - `AppDbContext.cs`: Luokka, joka vastaa tietokannan yhteydenpidosta.
 
 - `appsettings.json`: Sovelluksen asetuksia
-  HUOM! Tämä menee githubiin
+  
 
-- `appsettings.Development.json`: Kehitystilan asteuksia, mm. ConnectionString
-  HUOM! Tämä ei mene githubiin
+- `appsettings.Development.json`: Kehitystilan asteuksia.
 
 - `DataSeeder.cs` : Joka luo tietokantaan datan ( huoneen, tietokoneet ja testikäyttäjän)
 
   - `Program.cs`: Täältä käynnistetään sovellus ja määritellään asetuksia.
 
-# Kehitystyötä tehdessä
 
-Luotava appsettings.Developmnet.json tiedosto jonne
-
-## TODO Muutetaan toimimaan .env tiedostosta
+# Tietokantayhteyden parametrit haetaan .env tiedostosta
 
 # Asennetut NuGet paketit:
 
