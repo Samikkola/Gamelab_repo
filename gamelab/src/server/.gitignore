@@ -272,7 +272,6 @@ __pycache__/
 # tools/
 
 # Config files
-appsettings.Development.json
 .env
 
 
