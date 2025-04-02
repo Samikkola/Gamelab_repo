@@ -1,5 +1,6 @@
 
 using System.Text.Json.Serialization;
+using DotNetEnv;
 using gamelab.Services;
 using gamelab.src.server;
 using gamelab.src.server.Services;
@@ -7,6 +8,9 @@ using Microsoft.EntityFrameworkCore;
 
 
 var builder = WebApplication.CreateBuilder(args);
+
+//Tuodaan ympäristömuuttujat käyttöön
+Env.Load();
 
 //Lisätään kontrollerit ja Json sterilisaatio ( enum -> string)
 builder.Services
@@ -16,8 +20,14 @@ builder.Services
         options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
     });
 
-//Luodaan yhteys tietokantaan
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+
+//Luodaan yhteys tietokantaan käyttäen ympäristömuuttujia
+var connectionString = $"Server={Env.GetString("DB_HOST")};" +
+                       $"Port={Env.GetString("DB_PORT")};" +
+                       $"Database={Env.GetString("DB_NAME")};" +
+                       $"Username={Env.GetString("DB_USER")};" +
+                       $"Password={Env.GetString("DB_PASS")}";
+
 builder.Services.AddDbContext<AppDbContext>(options => 
     options.UseNpgsql(connectionString));
     
