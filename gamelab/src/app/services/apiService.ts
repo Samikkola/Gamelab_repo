@@ -20,3 +20,15 @@ export const createReservationApi = async (
 };
 
 
+//Alustavat API-kutsut käyttäjien hallintaan
+//Tarkistaa onko käyttäjä olemassa
+export const checkUserExists = async (email: string): Promise<boolean> => {
+  const response = await apiClient.get(`/users/check?email=${email}`);
+  return response.data.exists;
+};
+//Tallentaa käyttäjätiedot tietokantaan
+//Tämä kutsutaan rekisteröinnin yhteydessä
+export const registerUser = async (email: string, username: string) => {
+  const response = await apiClient.post("/users/register", { email, username });
+  return response.data; // palauttaa { id, email, username }
+};

@@ -2,6 +2,7 @@
 import Image from "next/image";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { checkUserExists } from "./services/apiService";
 
 const LoginPage = () => {
   const [email, setEmail] = useState("");
@@ -30,15 +31,29 @@ const LoginPage = () => {
     alert(`🔐 Kirjautumiskoodi: ${code}`);
   };
 
-  const handleCodeSumbit = (e: React.FormEvent) => {
+  const handleCodeSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
 
-    if (enteredCode === generatedCode) {
-      console.log("Koodi oikein, ohjataan kalenterisivulle!");
-      router.push("/dashboard"); // Vaihda "/home" haluamaasi reittiin
+    if (enteredCode !== generatedCode) {
+      setError("❌ Väärä koodi!");
+      return;
+    }
+    // API-kutsulla tarkistetaan onko käyttäjä jo tietokannassa
+    const exists = await checkUserExists(email);
+
+    if (exists) {
+      // Demotaan käyttäjätiedot, jotka saadaan backendiltä
+      // Tallennetaan käyttäjätiedot localStorageen
+      // TODO: Haetaan backendiltä
+      // const user = await getUserByEmail(email);
+      const user = { id: 1, email, username: "demo" }; 
+      localStorage.setItem("user", JSON.stringify(user));
+      router.push("/calendar"); // Ohjataan kalenterisivulle
     } else {
-      setError("Virheellinen koodi. Yritä uudelleen.");
+      // Käyttäjää ei löydy, ohjataan rekisteröintisivulle
+      localStorage.setItem("pendingEmail", email); // Tallennetaan sähköposti localStorageen
+      router.push("/register"); // Ohjataan rekisteröintisivulle
     }
   };
 
@@ -67,7 +82,7 @@ const LoginPage = () => {
         </h1>
 
         <form
-          onSubmit={showCodeInput ? handleCodeSumbit : handleEmailSubmit}
+          onSubmit={showCodeInput ? handleCodeSubmit : handleEmailSubmit}
           className="w-80 bg-white p-6 rounded-lg shadow-md"
         >
           <div className="mb-4">
