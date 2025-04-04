@@ -1,31 +1,24 @@
-"use client";
-import Image from "next/image";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
-import { createUserApi } from "@/app/services/apiService";
 
-export default function RegisterPage() {
-  const router = useRouter();
-  const [username, setUsername] = useState("");
+
+"use client";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import Image from "next/image";
+import {
+  requestLoginCodeApi,
+  
+} from "@/app/services/apiService";
+
+const LoginPage = () => {
   const [email, setEmail] = useState("");
-  const [generatedCode, setGeneratedCode] = useState("");
   const [enteredCode, setEnteredCode] = useState("");
   const [showCodeInput, setShowCodeInput] = useState(false);
   const [error, setError] = useState("");
+  const router = useRouter();
 
-  const handleRegisterSubmit = async (e: React.FormEvent) => {
+  const handleEmailSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
-
-    if (!username || !email) {
-      setError("Täytä molemmat kentät.");
-      return;
-    }
-
-    if (username.length < 3) {
-      setError("Käyttäjänimen täytyy olla vähintään 3 merkkiä pitkä.");
-      return;
-    }
 
     const emailRegex = /^[^@]+@[^@]*xamk[^@]*$/i;
     if (!emailRegex.test(email)) {
@@ -34,23 +27,22 @@ export default function RegisterPage() {
     }
 
     try {
-      const user = await createUserApi({ username, email });
-      setGeneratedCode(user.oneTimeCode);
-      // Tallennetaan käyttäjä localStorageen
+      const user = await requestLoginCodeApi(email);
       localStorage.setItem("user", JSON.stringify(user));
       setShowCodeInput(true);
       alert(`🔐 Kirjautumiskoodisi on: ${user.oneTimeCode}`);
-    } catch (err) {
-      setError("Rekisteröinti epäonnistui.");
-      console.error("❌ Rekisteröinti virhe:", err);
+    } catch {
+      setError("Virhe koodin pyynnössä.");
     }
   };
 
-  const handleCodeSubmit = (e: React.FormEvent) => {
+  const handleCodeSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
-
-    if (enteredCode === generatedCode) {
+  
+    const user = JSON.parse(localStorage.getItem("user") || "{}");
+  
+    if (enteredCode === user.oneTimeCode) {
       router.push("/dashboard");
     } else {
       setError("❌ Väärä kirjautumiskoodi");
@@ -59,8 +51,8 @@ export default function RegisterPage() {
 
   return (
     <div className="flex flex-col h-screen">
-      {/* Keltainen yläpalkki */}
-      <header className="bg-xamkYellow h-[100px] sm:h-[100px] w-full fixed top-0 left-0 z-50 flex items-center gap-4 px-6">
+      {/* Header */}
+      <header className="bg-xamkYellow h-[100px] w-full fixed top-0 left-0 z-50 flex items-center gap-4 px-6">
         <div className="relative w-[120px] h-[100px]">
           <Image
             src="/images/image.png"
@@ -73,14 +65,14 @@ export default function RegisterPage() {
         <h1 className="text-4xl font-bold text-black">Gamelab</h1>
       </header>
 
-      {/* Lomake */}
-      <div className="flex flex-col items-center justify-center flex-grow bg-gray-100">
+      {/* Content */}
+      <div className="flex flex-col items-center justify-center flex-grow bg-gray-100 pt-32">
         <h1 className="text-2xl mb-4 text-black">
-          Rekisteröidy Xamk Gamelab -järjestelmään
+          Xamk Gamelab varausjärjestelmä
         </h1>
 
         <form
-          onSubmit={showCodeInput ? handleCodeSubmit : handleRegisterSubmit}
+          onSubmit={showCodeInput ? handleCodeSubmit : handleEmailSubmit}
           className="w-80 bg-white p-6 rounded-lg shadow-md"
         >
           <div className="mb-4">
@@ -92,20 +84,6 @@ export default function RegisterPage() {
               id="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full p-2 border border-black rounded text-black"
-              required
-            />
-          </div>
-
-          <div className="mb-4">
-            <label htmlFor="username" className="block mb-2 text-black text-xl">
-              Käyttäjänimi
-            </label>
-            <input
-              type="text"
-              id="username"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
               className="w-full p-2 border border-black rounded text-black"
               required
             />
@@ -131,12 +109,14 @@ export default function RegisterPage() {
 
           <button
             type="submit"
-            className="w-full p-2 bg-yellow-500 text-black rounded hover:bg-yellow-500 shadow-none font-bold"
+            className="w-full p-2 bg-yellow-500 text-black rounded font-bold hover:bg-yellow-600"
           >
-            {showCodeInput ? "Kirjaudu" : "Rekisteröidy"}
+            {showCodeInput ? "Kirjaudu" : "Lähetä kirjautumiskoodi"}
           </button>
         </form>
       </div>
     </div>
   );
-}
+};
+
+export default LoginPage;

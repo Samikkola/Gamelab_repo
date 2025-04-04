@@ -1,132 +1,43 @@
 "use client";
 import Image from "next/image";
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { checkUserExists } from "./services/apiService";
+import Link from "next/link";
 
-const LoginPage = () => {
-  const [email, setEmail] = useState("");
-  const [enteredCode, setEnteredCode] = useState("");
-  const [generatedCode, setGeneratedCode] = useState("");
-  const [showCodeInput, setShowCodeInput] = useState(false);
-  const [error, setError] = useState("");
-  const router = useRouter();
-
-  const handleEmailSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setError("");
-
-    const emailRegex = /^[^@]+@[^@]*xamk[^@]*$/i; // Regex xamk-sähköpostiosoitteille
-    if (!emailRegex.test(email)) {
-      setError("Sinulla täytyy olla xamk-sähköposti.");
-      return;
-    }
-
-    //Generoidaan kertakäyttökoodi TODO: siirretän tämä backendille
-    const code = Math.floor(100000 + Math.random() * 900000).toString(); // Generoi satunnaisen 6-numeron koodin
-    setGeneratedCode(code);
-    setShowCodeInput(true);
-
-    //Näytetään koodia alertissa TODO:Lähetetään koodi sähköpostiin
-    alert(`🔐 Kirjautumiskoodi: ${code}`);
-  };
-
-  const handleCodeSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError("");
-
-    if (enteredCode !== generatedCode) {
-      setError("❌ Väärä koodi!");
-      return;
-    }
-    // API-kutsulla tarkistetaan onko käyttäjä jo tietokannassa
-    const exists = await checkUserExists(email);
-
-    if (exists) {
-      // Demotaan käyttäjätiedot, jotka saadaan backendiltä
-      // Tallennetaan käyttäjätiedot localStorageen
-      // TODO: Haetaan backendiltä
-      // const user = await getUserByEmail(email);
-      const user = { id: 1, email, username: "demo" }; 
-      localStorage.setItem("user", JSON.stringify(user));
-      router.push("/calendar"); // Ohjataan kalenterisivulle
-    } else {
-      // Käyttäjää ei löydy, ohjataan rekisteröintisivulle
-      localStorage.setItem("pendingEmail", email); // Tallennetaan sähköposti localStorageen
-      router.push("/register"); // Ohjataan rekisteröintisivulle
-    }
-  };
-
+export default function LandingPage() {
   return (
     <div className="flex flex-col h-screen">
       {/* Keltainen palkki sivun ylälaidassa */}
       <header className="bg-xamkYellow h-[100px] sm:h-[100px] w-full fixed top-0 left-0 z-50 flex items-center gap-4 px-6">
-        {/* Kuva-wrapperi: suhteellinen elementti, jotta next/image fill toimii oikein */}
         <div className="relative w-[120px] h-[100px]">
           <Image
-            src="/images/image.png" // Kuvan polku public-kansiosta
-            alt="Gamelab Logo" // Alt-teksti saavutettavuutta varten
-            fill // Täyttää koko wrapperin
-            className="object-contain" // Skaalaa niin että kuva ei leikkaannu
-            priority // Ladataan etusijalla
+            src="/images/image.png"
+            alt="Gamelab Logo"
+            fill
+            className="object-contain"
+            priority
           />
         </div>
-
-        {/* Sovelluksen otsikko */}
         <h1 className="text-4xl font-bold text-black">Gamelab</h1>
       </header>
 
-      <div className="flex flex-col items-center justify-center flex-grow bg-gray-100">
-        <h1 className="text-2xl mb-4 text-black">
+      <div className="flex flex-col items-center justify-center flex-grow bg-gray-100 pt-[100px]">
+        <h1 className="text-2xl mb-6 text-black">
           Xamk Gamelab varausjärjestelmä
         </h1>
 
-        <form
-          onSubmit={showCodeInput ? handleCodeSubmit : handleEmailSubmit}
-          className="w-80 bg-white p-6 rounded-lg shadow-md"
-        >
-          <div className="mb-4">
-            <label htmlFor="username" className="block mb-2 text-black text-xl">
-              Email
-            </label>
-            <input
-              type="text"
-              id="username"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-full p-2 border border-black rounded text-black"
-              required
-            />
-          </div>
+        <div className="w-80 bg-white p-6 rounded-lg shadow-md flex flex-col gap-4">
+          <Link href="/login">
+            <button className="w-full p-2 bg-blue-500 text-white rounded hover:bg-blue-600 font-bold">
+              Kirjaudu sisään
+            </button>
+          </Link>
 
-          {showCodeInput && (
-            <div className="mb-4">
-              <label htmlFor="code" className="block mb-2 text-black text-xl">
-                Kirjautumiskoodi
-              </label>
-              <input
-                type="text"
-                id="code"
-                value={enteredCode}
-                onChange={(e) => setEnteredCode(e.target.value)}
-                className="w-full p-2 border border-black rounded text-black"
-                required
-              />
-            </div>
-          )}
-
-          {error && <p className="text-red-600 mb-2">{error}</p>}
-
-          <button
-            type="submit"
-            className="w-full p-2 bg-yellow-500 text-black rounded hover:bg-yellow-500 shadow-none font-bold"
-          >
-            {showCodeInput ? "Kirjaudu" : "Lähetä kirjautumiskoodi"}
-          </button>
-        </form>
+          <Link href="/register">
+            <button className="w-full p-2 bg-green-500 text-white rounded hover:bg-green-600 font-bold">
+              Rekisteröidy
+            </button>
+          </Link>
+        </div>
       </div>
     </div>
   );
-};
-
-export default LoginPage;
+}
