@@ -114,6 +114,44 @@ namespace gamelab.src.server.Controllers
             }
         }
 
+        /// HTTP POST -metodi uuden käyttäjän luonnille
+        /// Vastaanottaa käyttäjänimen ja sähköpostin, generoi kertakäyttökoodin ja tallentaa tiedot tietokantaan
+        /// <param name="dto">Uuden käyttäjän tiedot</param>
+        [HttpPost]
+        public async Task<IActionResult> CreateUserAsync([FromBody] CreateUserDto dto)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            // Generoidaan 8-merkkinen kertakäyttökoodi
+            var oneTimeCode = Guid.NewGuid().ToString("N").Substring(0, 8);
+
+            var user = new UserModel
+            {
+                Username = dto.Username,
+                Email = dto.Email,
+                OneTimeCode = oneTimeCode,
+                Role = UserRole.Student
+            };
+
+            _context.Users.Add(user);
+            await _context.SaveChangesAsync();
+
+            return Ok(new { user.Id, user.Username, user.Email, user.OneTimeCode });
+        }
+
+        /// <summary>
+        /// DTO luokka uuden käyttäjän luonnille
+        /// </summary>
+        public class CreateUserDto
+        {
+            public required string Username { get; set; }
+            public required string Email { get; set; }
+        }
+
+
         /// <summary>
         /// Dto luokka varauksen muokkaamiselle
         /// </summary>
