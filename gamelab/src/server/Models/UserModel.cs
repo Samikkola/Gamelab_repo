@@ -24,6 +24,10 @@ namespace gamelab.src.server.Models
         [EmailAddress]
         public string? Email { get; set; }
 
+         // Uusi property kertakäyttökoodille
+        [Required]
+        public string OneTimeCode { get; set; } = "";
+
         public ICollection<Reservation>? Reservation { get; set; } //Navigointi ominaisuus, tämä ilmeisesti on hyvä olla
         
         [Required]
