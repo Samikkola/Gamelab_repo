@@ -21,15 +21,13 @@ export const createReservationApi = async (
   }
 };
 
-
 //Luodaan uusi käyttäjä (register)
-export const createUserApi = async ( userData: {
+export const createUserApi = async (userData: {
   email: string;
   username: string;
 }) => {
   try {
-    const response = await apiClient.post("/user", userData, {     
-    });
+    const response = await apiClient.post("/user", userData, {});
     return response.data;
   } catch (error) {
     console.error("❌ Virhe käyttäjän luonnissa:", error);
@@ -40,17 +38,21 @@ export const createUserApi = async ( userData: {
 // Pyydetään kirjautumiskoodi (login)
 export const requestLoginCodeApi = async (
   email: string
-): Promise<{ 
-  id: number
+): Promise<{
+  id: number;
   email: string;
   username: string;
-  oneTimeCode: string 
+  oneTimeCode: string;
 }> => {
   try {
-    const response = await apiClient.post("/user/request-code", email,);
+    const response = await apiClient.post("/user/request-code",email, {
+       headers: {
+         "Content-Type": "application/json",
+       },
+    });
     return response.data;
   } catch (error) {
     console.error("requestLoginCodeApi error:", error);
-    throw new Error(`Virhe koodin pyynnössä`);
+    throw new Error(`Käyttäjää ei löydetty: ${error}`);
   }
 };

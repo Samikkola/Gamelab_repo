@@ -32,7 +32,7 @@ const LoginPage = () => {
       setShowCodeInput(true);
       alert(`🔐 Kirjautumiskoodisi on: ${user.oneTimeCode}`);
     } catch {
-      setError("Virhe koodin pyynnössä.");
+      setError("Käyttäjää ei löytynyt.");
     }
   };
 

@@ -191,5 +191,7 @@ namespace gamelab.src.server.Controllers
             public DateTimeOffset StartDate { get; set; }
             public DateTimeOffset EndDate { get; set; }
         }
+
+      
     }
 }
