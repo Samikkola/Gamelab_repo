@@ -3,11 +3,12 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { createUserApi } from "@/app/services/apiService";
-
+import {User} from "@/app/models/userModel";
 export default function RegisterPage() {
   const router = useRouter();
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
+  const [user, setUser] = useState<User>();
   const [generatedCode, setGeneratedCode] = useState("");
   const [enteredCode, setEnteredCode] = useState("");
   const [showCodeInput, setShowCodeInput] = useState(false);
@@ -36,8 +37,7 @@ export default function RegisterPage() {
     try {
       const user = await createUserApi({ username, email });
       setGeneratedCode(user.oneTimeCode);
-      // Tallennetaan käyttäjä localStorageen
-      localStorage.setItem("user", JSON.stringify(user));
+      setUser(user);
       setShowCodeInput(true);
       alert(`🔐 Kirjautumiskoodisi on: ${user.oneTimeCode}`);
     } catch (err) {
@@ -49,8 +49,17 @@ export default function RegisterPage() {
   const handleCodeSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
-
+    //Jos syötetty koodi on oikein, tallennetaan tiedot
+    //localstorageen ja siirrytään dashboardiin
     if (enteredCode === generatedCode) {
+      localStorage.setItem(
+        "user",
+        JSON.stringify({
+          id: user?.id,
+          email: user?.email,
+          username: user?.username,
+        })
+      );
       router.push("/dashboard");
     } else {
       setError("❌ Väärä kirjautumiskoodi");
@@ -91,6 +100,7 @@ export default function RegisterPage() {
               type="email"
               id="email"
               value={email}
+              disabled={showCodeInput}//Piilottaan email-kentä, kirjautumiskoodin syöttövaiheessa
               onChange={(e) => setEmail(e.target.value)}
               className="w-full p-2 border border-black rounded text-black"
               required
@@ -105,6 +115,7 @@ export default function RegisterPage() {
               type="text"
               id="username"
               value={username}
+              disabled={showCodeInput}//Piilottaan username-kentä, kirjautumiskoodin syöttövaiheessa
               onChange={(e) => setUsername(e.target.value)}
               className="w-full p-2 border border-black rounded text-black"
               required

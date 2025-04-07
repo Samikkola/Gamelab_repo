@@ -3,6 +3,7 @@
 import { Dialog } from "@headlessui/react";
 import { Reservation } from "../models/reservationModel";
 import { createReservationApi } from "../services/apiService";
+import { User } from "../models/userModel";
 
 interface ModalProps {
   isOpen: boolean;
@@ -27,7 +28,7 @@ export default function Modal({
   computerId,
   setComputerId,
 }: ModalProps) {
-  
+
   const computers = [
     { id: 1, label: "PC-1" },
     { id: 2, label: "PC-2" },
@@ -36,6 +37,9 @@ export default function Modal({
     { id: 5, label: "PC-5" },
     { id: 6, label: "PC-6" },
   ];
+  //Haetaan ja parsetaan käyttäjä localstoragesta TODO:pitää tehdä turvallisemmin
+  const userJson = localStorage.getItem("user");
+  const user : User = userJson ? JSON.parse(userJson) : null;
 
   const handleSaveReservation = async () => {
     if (!reservationName || !computerId) {
@@ -48,7 +52,7 @@ export default function Modal({
     );
     //Luodaan Reservation-objekti
     const newReservation: Reservation = {
-      userId: 2, //TODO, myöhemmin vaihdetaan käyttäjän id:hen
+      userId: user.id, //Käytetään user.id:tä localstoragesta
       description: reservationName,
       type: "Computer", //TODO, vaihdettava "Room" jos varataan huone
       startTime: sortedTimes[0].start,
