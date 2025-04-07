@@ -99,7 +99,7 @@ namespace gamelab.src.server.Controllers
                     reservationToUpdate.ComputerId = reservationDto.ComputerId;
                     reservationToUpdate.StartTime = reservationDto.StartDate;
                     reservationToUpdate.EndTime = reservationDto.EndDate;
-                    
+
                     await _context.SaveChangesAsync();
                     return Ok(reservationToUpdate);
                 }
@@ -143,6 +143,36 @@ namespace gamelab.src.server.Controllers
         }
 
         /// <summary>
+        /// HttpPost metodi joka lähettää jo rekisteröityneelle käyttäjälle kertakäyttökoodin 
+        /// Käyttäjä voi käyttää koodia kirjautuakseen sisään
+        /// </summary>
+        /// <param name="email"></param>
+        /// <returns></returns>
+        [HttpPost("request-code")]
+        public async Task<IActionResult> RequestCodeAsync([FromBody] string email)
+        {
+            if (string.IsNullOrEmpty(email))
+                return BadRequest("Sähköposti puuttuu.");
+
+            // Haetaan käyttäjä
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
+
+            if (user == null) return NotFound("Käyttäjää ei löytynyt.");
+
+            // Generoidaan uusi kertakäyttökoodi
+            var oneTimeCode = Guid.NewGuid().ToString("N").Substring(0, 8);
+
+            // Päivitetään käyttäjän kertakäyttökoodi
+            user.OneTimeCode = oneTimeCode;
+            _context.Users.Update(user);
+            await _context.SaveChangesAsync();
+
+            return Ok(new { user.Id, user.Username, user.Email, user.OneTimeCode });
+
+        }
+
+
+        /// <summary>
         /// DTO luokka uuden käyttäjän luonnille
         /// </summary>
         public class CreateUserDto
@@ -161,5 +191,7 @@ namespace gamelab.src.server.Controllers
             public DateTimeOffset StartDate { get; set; }
             public DateTimeOffset EndDate { get; set; }
         }
+
+      
     }
 }

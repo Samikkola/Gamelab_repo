@@ -1,4 +1,4 @@
-import axios, {  AxiosError } from "axios";
+import axios, { AxiosError } from "axios";
 import { Reservation } from "../models/reservationModel";
 
 const apiClient = axios.create({
@@ -13,10 +13,46 @@ export const createReservationApi = async (
   try {
     const response = await apiClient.post("/reservation", newReservation);
     return response.data;
-  } catch (error) {    
+  } catch (error) {
     const err = error as AxiosError;
-    throw new Error(`Error creating reservation: ${err.response?.data || err.message}`);
+    throw new Error(
+      `Error creating reservation: ${err.response?.data || err.message}`
+    );
   }
 };
 
+//Luodaan uusi käyttäjä (register)
+export const createUserApi = async (userData: {
+  email: string;
+  username: string;
+}) => {
+  try {
+    const response = await apiClient.post("/user", userData, {});
+    return response.data;
+  } catch (error) {
+    console.error("❌ Virhe käyttäjän luonnissa:", error);
+    throw new Error("Käyttäjän luominen epäonnistui");
+  }
+};
 
+// Pyydetään kirjautumiskoodi (login)
+export const requestLoginCodeApi = async (
+  email: string
+): Promise<{
+  id: number;
+  email: string;
+  username: string;
+  oneTimeCode: string;
+}> => {
+  try {
+    const response = await apiClient.post("/user/request-code",email, {
+       headers: {
+         "Content-Type": "application/json",
+       },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("requestLoginCodeApi error:", error);
+    throw new Error(`Käyttäjää ei löydetty: ${error}`);
+  }
+};
