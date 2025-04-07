@@ -39,8 +39,7 @@ export default function Modal({
   ];
   //Haetaan ja parsetaan käyttäjä localstoragesta TODO:pitää tehdä turvallisemmin
   const userJson = localStorage.getItem("user");
-  const user : User = userJson ? JSON.parse(userJson) : null;
-
+  const user: User | null = userJson ? JSON.parse(userJson) : null;
   const handleSaveReservation = async () => {
     if (!reservationName || !computerId) {
       alert("Täytä kaikki kentät!");
