@@ -45,6 +45,10 @@ export default function Modal({
       alert("Täytä kaikki kentät!");
       return;
     }
+    if (!user) {
+      alert("Käyttäjätietoja ei löytynyt!");
+      return;
+    }
     //Varmistetaan että aikajakso on järjestyksessä
     const sortedTimes = [...selectedTimes].sort(
       (a, b) => new Date(a.start).getTime() - new Date(b.start).getTime()
