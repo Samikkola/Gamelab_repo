@@ -6,10 +6,9 @@ import FullCalendar from "@fullcalendar/react";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin, { DateClickArg } from "@fullcalendar/interaction";
 import { v4 as uuidv4 } from "uuid";
-import Modal from "./Modal"; // Varauslomakkeen modaali
-import fiLocale from "@fullcalendar/core/locales/fi"; // Suomalainen päivämääräformaatti
+import Modal from "./Modal";
+import fiLocale from "@fullcalendar/core/locales/fi";
 
-// 🔷 Tyyppi tietokannasta haetulle varaukselle
 type ReservationFromBackend = {
   id: number;
   type: "Room" | "Computer";
@@ -18,35 +17,39 @@ type ReservationFromBackend = {
   computerId?: number;
 };
 
-// 🔷 Tyyppi FullCalendarille sopivalle eventille
 type ReservationEvent = {
   id: string;
   title: string;
   start: string;
   end: string;
   color: string;
+  type?: "Room" | "Computer";
+  computerId?: number;
+  display?: "auto" | "background";
+  classNames?: string[];
 };
 
 export default function CalendarComponent() {
-  // 🟩 Valitut ajat (vihreät "valitsemasi ajat")
   const [selectedTimes, setSelectedTimes] = useState<{ start: string; end: string; id: string }[]>([]);
-  // 🔠 Varauslomakkeessa käytettävä nimi
   const [reservationName, setReservationName] = useState("");
-  // 🔘 Modalin tila: auki / kiinni
   const [isModalOpen, setIsModalOpen] = useState(false);
-  // 💻 Valittu tietokoneen ID
   const [computerId, setComputerId] = useState<number>(0);
-  // 🔴🔵 Tietokannasta haetut varaukset (näytetään kalenterissa)
   const [fetchedEvents, setFetchedEvents] = useState<ReservationEvent[]>([]);
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
 
-  // 🔽 Haetaan varaukset kun komponentti latautuu
+  useEffect(() => {
+    if (toastMessage) {
+      const timeout = setTimeout(() => setToastMessage(null), 4000);
+      return () => clearTimeout(timeout);
+    }
+  }, [toastMessage]);
+
   useEffect(() => {
     const fetchReservations = async () => {
       try {
         const response = await axios.get("http://localhost:5065/api/reservation");
         const reservations: ReservationFromBackend[] = response.data;
 
-        // 🔄 Muunnetaan tietokantavaraus kalenterin eventiksi
         const events: ReservationEvent[] = reservations.flatMap((r) => {
           const base = {
             id: r.id.toString(),
@@ -55,29 +58,30 @@ export default function CalendarComponent() {
             type: r.type,
             computerId: r.computerId,
           };
-        
+
           if (r.type === "Room") {
             return [
               {
                 ...base,
                 title: "",
                 color: "rgba(235, 14, 62, 0.85)",
-                display: "auto", // näkyy ja estää klikkauksen
+                classNames: ["room-event"],
+                display: "background",
               },
             ];
           }
-        
+
           if (r.type === "Computer") {
             return [
               {
                 ...base,
-                title: "", // ei näytetä tekstinä automaattisesti
+                title: "",
                 color: "rgb(0, 16, 234)",
-                display: "background", // sallii klikkauksen
+                display: "background",
               },
             ];
           }
-        
+
           return [];
         });
 
@@ -90,46 +94,49 @@ export default function CalendarComponent() {
     fetchReservations();
   }, []);
 
-  // 🖱 Klikkaus kalenterissa lisää valitun tunnin (jos sallittu)
   const handleDateClick = (clickInfo: DateClickArg) => {
-    const selectedStart = new Date(clickInfo.date).toISOString();
-    const selectedEnd = new Date(new Date(selectedStart).getTime() + 60 * 60 * 1000).toISOString();
+    const selectedStart = new Date(clickInfo.date);
+    const selectedEnd = new Date(selectedStart.getTime() + 60 * 60 * 1000);
+
+    const overlapsRoom = fetchedEvents.some((event) => {
+      if (event.type !== "Room") return false;
+      const start = new Date(event.start);
+      const end = new Date(event.end);
+      return selectedStart < end && selectedEnd > start;
+    });
+
+    if (overlapsRoom) {
+      setToastMessage("Et voi valita aikaa, koska huone on jo varattu.");
+      return;
+    }
 
     setSelectedTimes((prevTimes) => {
-      if (prevTimes.some((time) => time.start === selectedStart)) return prevTimes;
+      const newSlot = {
+        start: selectedStart.toISOString(),
+        end: selectedEnd.toISOString(),
+        id: uuidv4(),
+      };
+
+      if (prevTimes.some((time) => time.start === newSlot.start)) return prevTimes;
       if (prevTimes.length >= 4) {
-        alert("Et voi varata yli 4 tuntia!");
+        setToastMessage("Et voi varata yli 4 tuntia!");
         return prevTimes;
       }
 
-      const newSlot = { start: selectedStart, end: selectedEnd, id: uuidv4() };
+      if (prevTimes.length === 0) return [newSlot];
 
-      if (prevTimes.length === 0) {
-        return [newSlot];
-      }
+      const sorted = [...prevTimes].sort((a, b) => new Date(a.start).getTime() - new Date(b.start).getTime());
+      const first = sorted[0];
+      const last = sorted[sorted.length - 1];
 
-      const sortedTimes = [...prevTimes].sort((a, b) => new Date(a.start).getTime() - new Date(b.start).getTime());
-      const first = sortedTimes[0];
-      const last = sortedTimes[sortedTimes.length - 1];
+      if (last.end === newSlot.start) return [...sorted, newSlot];
+      if (newSlot.end === first.start) return [newSlot, ...sorted];
 
-      const newStart = new Date(selectedStart).toISOString();
-      const newEnd = new Date(selectedEnd).toISOString();
-
-      // 🔄 Vain peräkkäiset ajat sallitaan
-      if (last.end === newStart) {
-        return [...sortedTimes, newSlot];
-      }
-
-      if (newEnd === first.start) {
-        return [newSlot, ...sortedTimes];
-      }
-
-      alert("Voit varata vain peräkkäisiä tunteja!");
+      setToastMessage("Voit varata vain peräkkäisiä tunteja!");
       return prevTimes;
     });
   };
 
-  // ❌ Klikkaus varattuun aikaan (vihreä) poistaa sen ja sen jälkeen tulevat
   const handleDeleteClick = (id: string) => {
     setSelectedTimes((prevTimes) => {
       const index = prevTimes.findIndex((time) => time.id === id);
@@ -142,7 +149,6 @@ export default function CalendarComponent() {
     <div className="relative p-6 bg-white shadow-md rounded-lg mx-auto" style={{ maxWidth: "1200px" }}>
       <h2 className="text-2xl font-bold mb-4 text-gray-800 text-center">Varauskalenteri</h2>
 
-      {/* ✅ Näytetään varausnappi vain jos aikoja on valittu */}
       {selectedTimes.length > 0 && (
         <div className="absolute top-2 right-4 z-50">
           <button
@@ -154,26 +160,21 @@ export default function CalendarComponent() {
         </div>
       )}
 
-      {/* 📅 FullCalendar-näkymä */}
-      <div
-        className="border border-black border-width p-3 rounded-lg overflow-hidden mx-auto relative"
-        style={{ width: "1100px", height: "650px" }}
-      >
+      <div className="border border-black border-width p-3 rounded-lg overflow-hidden mx-auto relative" style={{ width: "1100px", height: "650px" }}>
         <FullCalendar
           plugins={[timeGridPlugin, interactionPlugin]}
           initialView="timeGridWeek"
           dateClick={handleDateClick}
           locale={fiLocale}
           firstDay={1}
-          // 🔁 Kalenteriin yhdistetään sekä backendin varaukset että käyttäjän valinnat
           events={[
             ...fetchedEvents,
             ...selectedTimes.map((time) => ({
-              title: `Valittu aika ❌`,
+              title: `          Valittu aika`,
               start: time.start,
               end: time.end,
-              color: "rgba(2, 62, 5, 0.92)", 
-              id: time.id,  
+              color: "rgba(2, 62, 5, 0.92)",
+              id: time.id,
             })),
           ]}
           eventClick={(info) => handleDeleteClick(info.event.id)}
@@ -184,31 +185,36 @@ export default function CalendarComponent() {
           contentHeight="auto"
           slotDuration="01:00:00"
           selectMirror={true}
-         
           allDaySlot={false}
-     eventContent={(arg) => {
-  const time = arg.timeText;
+          eventContent={(arg) => {
+            const start = arg.event.start;
+            const end = arg.event.end;
+            const format = (date: Date | null) =>
+              date?.toLocaleTimeString("fi-FI", { hour: "2-digit", minute: "2-digit" }) ?? "";
+            const time = `${format(start)} – ${format(end)}`;
 
-  if (arg.event.extendedProps.type === "Computer") {
-    return {
-      domNodes: [document.createTextNode(`💻 Laitteita varattu (${time})`)],
-    };
-  }
+            const span = document.createElement("span");
+            span.style.color = "white";
+            span.style.fontWeight = "bold";
+            span.style.fontSize = "12px";
 
-  if (arg.event.extendedProps.type === "Room") {
-    return {
-      domNodes: [document.createTextNode(`🎮 Pelihuone varattu (${time})`)],
-    };
-  }
+            if (arg.event.extendedProps.type === "Room") {
+              span.textContent = `🎮 Pelihuone varattu\n        (${time})`; // rivinvaihto
+              span.style.whiteSpace = "pre"; // sallii \n tulostuvan rivinvaihtona
+              return { domNodes: [span] };
+            }
+            if (arg.event.extendedProps.type === "Computer") {
+              span.textContent = `💻 Laitteita varattu \n        (${time})`;
+              span.style.whiteSpace = "pre"; // sallii \n tulostuvan rivinvaihtona
+              return { domNodes: [span] };
+            }
 
-  // ✅ Palauta oletusteksti esim. valituille ajoille
-  return {
-    domNodes: [document.createTextNode(`✅ Valittu aika ${arg.timeText}`)],
-  };
-}}
+            span.textContent = `${arg.event.title} \n        (${time})`;
+            span.style.whiteSpace = "pre";
+            return { domNodes: [span] };
+          }}
         />
 
-        {/* FullCalendarin fontti- ja värimuokkauksia */}
         <style jsx>{`
           :global(.fc-timegrid-slot) {
             height: 47px !important;
@@ -219,10 +225,28 @@ export default function CalendarComponent() {
           :global(.fc-col-header-cell-cushion) {
             color: black !important;
           }
+
+          :global(.fc .fc-bg-event) {
+            opacity: 0.8 !important;
+            filter: none !important;
+          }
+
+          :global(.fc .fc-event-title),
+          :global(.fc .fc-event-main) {
+            color: white !important;
+          }
         `}</style>
+
+        {toastMessage && (
+          <div
+            className="fixed top-4 left-1/2 transform -translate-x-1/2 bg-red-600 text-white px-4 py-2 rounded shadow-lg cursor-pointer z-50"
+            onClick={() => setToastMessage(null)}
+          >
+            {toastMessage}
+          </div>
+        )}
       </div>
 
-      {/* 🪟 Varausmodaali */}
       <Modal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
