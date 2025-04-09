@@ -5,6 +5,7 @@ import { Reservation } from "../models/reservationModel";
 import { createReservationApi } from "../services/apiService";
 import { User } from "../models/userModel";
 import { useMemo, useState } from "react";
+import { useEffect } from "react";
 
 interface ModalProps {
   isOpen: boolean;
@@ -73,8 +74,15 @@ export default function Modal({
     return { availableComputers, canReserveRoom };
   }, [selectedTimes, fetchedEvents]);
 
-  const userJson = localStorage.getItem("user");
-  const user: User | null = userJson ? JSON.parse(userJson) : null;
+  const [user, setUser] = useState<User | null>(null);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const userJson = localStorage.getItem("user");
+      const parsed = userJson ? JSON.parse(userJson) : null;
+      setUser(parsed);
+    }
+  }, []);
 
   const handleSaveReservation = async () => {
     if (!reservationName || (reservationType === "Computer" && !computerId)) {
