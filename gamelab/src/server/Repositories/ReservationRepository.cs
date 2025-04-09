@@ -41,10 +41,29 @@ public class ReservationRepository : IReservationRepository
     /// <param name="reservation"></param>
     /// <returns>True jos varaus onnistui, muuten false</returns>
     public async Task<bool> IsTimeSlotAvailableAsync(Reservation reservation)
+{
+    if (reservation.Type == ReservationType.Computer && reservation.ComputerId != null)
     {
+        // Tarkistetaan päällekkäisyydet samalla tietokoneella
         return !await _context.Reservations.AnyAsync(r =>
-            r.RoomId == reservation.RoomId &&
+            r.Type == ReservationType.Computer &&
+            r.ComputerId == reservation.ComputerId &&
             r.StartTime < reservation.EndTime &&
             r.EndTime > reservation.StartTime);
     }
+
+    if (reservation.Type == ReservationType.Room && reservation.RoomId != null)
+    {
+        // Estetään jos huone tai sen koneet ovat varattuja
+        return !await _context.Reservations.AnyAsync(r =>
+            (
+                (r.Type == ReservationType.Room && r.RoomId == reservation.RoomId) || // koko huone varattu
+                (r.Type == ReservationType.Computer && r.Computer != null && r.Computer.RoomId == reservation.RoomId) // kone huoneesta varattu
+            ) &&
+            r.StartTime < reservation.EndTime &&
+            r.EndTime > reservation.StartTime);
+    }
+
+    return true;
+}
 }
