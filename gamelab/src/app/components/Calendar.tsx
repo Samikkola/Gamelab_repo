@@ -47,19 +47,43 @@ export default function CalendarComponent() {
         const reservations: ReservationFromBackend[] = response.data;
 
         // 🔄 Muunnetaan tietokantavaraus kalenterin eventiksi
-        const eventsFromBackend: ReservationEvent[] = reservations.map((r) => ({
-          id: r.id.toString(),
-          title: r.type === "Room" ? "Koko tila varattu" : "Laitteita varattu",
-          start: r.startTime,
-          end: r.endTime,
-          color: r.type === "Room" ? "rgba(235, 14, 62, 0.85)" : "rgba(0, 16, 234, 0.3)",
-          display: "auto",
-          type: r.type,
-          computerId: r.computerId,
-        }));
-        setFetchedEvents(eventsFromBackend);
+        const events: ReservationEvent[] = reservations.flatMap((r) => {
+          const base = {
+            id: r.id.toString(),
+            start: r.startTime,
+            end: r.endTime,
+            type: r.type,
+            computerId: r.computerId,
+          };
+        
+          if (r.type === "Room") {
+            return [
+              {
+                ...base,
+                title: "",
+                color: "rgba(235, 14, 62, 0.85)",
+                display: "auto", // näkyy ja estää klikkauksen
+              },
+            ];
+          }
+        
+          if (r.type === "Computer") {
+            return [
+              {
+                ...base,
+                title: "", // ei näytetä tekstinä automaattisesti
+                color: "rgb(0, 16, 234)",
+                display: "background", // sallii klikkauksen
+              },
+            ];
+          }
+        
+          return [];
+        });
+
+        setFetchedEvents(events);
       } catch (error) {
-        console.error("Varauksia ei voitu hakea:", error);
+        console.error("Error fetching reservations:", error);
       }
     };
 
@@ -148,7 +172,7 @@ export default function CalendarComponent() {
               title: `Valittu aika ❌`,
               start: time.start,
               end: time.end,
-              color: "rgba(27, 212, 36, 0.92)", // 🟢 vaaleanvihreä
+              color: "rgba(2, 62, 5, 0.92)", 
               id: time.id,  
             })),
           ]}
@@ -162,6 +186,26 @@ export default function CalendarComponent() {
           selectMirror={true}
          
           allDaySlot={false}
+     eventContent={(arg) => {
+  const time = arg.timeText;
+
+  if (arg.event.extendedProps.type === "Computer") {
+    return {
+      domNodes: [document.createTextNode(`💻 Laitteita varattu (${time})`)],
+    };
+  }
+
+  if (arg.event.extendedProps.type === "Room") {
+    return {
+      domNodes: [document.createTextNode(`🎮 Pelihuone varattu (${time})`)],
+    };
+  }
+
+  // ✅ Palauta oletusteksti esim. valituille ajoille
+  return {
+    domNodes: [document.createTextNode(`✅ Valittu aika ${arg.timeText}`)],
+  };
+}}
         />
 
         {/* FullCalendarin fontti- ja värimuokkauksia */}
