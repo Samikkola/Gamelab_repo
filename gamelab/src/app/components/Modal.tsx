@@ -3,6 +3,7 @@
 import { Dialog } from "@headlessui/react";
 import { Reservation } from "../models/reservationModel";
 import { createReservationApi } from "../services/apiService";
+import { User } from "../models/userModel";
 import { useMemo, useState } from "react";
 
 interface ModalProps {
@@ -76,13 +77,17 @@ export default function Modal({
       alert("Täytä kaikki kentät!");
       return;
     }
-
+    if (!user) {
+      alert("Käyttäjätietoja ei löytynyt!");
+      return;
+    }
+    //Varmistetaan että aikajakso on järjestyksessä
     const sortedTimes = [...selectedTimes].sort(
       (a, b) => new Date(a.start).getTime() - new Date(b.start).getTime()
     );
 
     const newReservation: Reservation = {
-      userId: 1, // TODO: korvaa oikealla käyttäjällä
+      userId: user.id, //Käytetään user.id:tä localstoragesta
       description: reservationName,
       type: reservationType,
       startTime: sortedTimes[0].start,
