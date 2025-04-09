@@ -45,56 +45,49 @@ export default function CalendarComponent() {
   }, [toastMessage]);
 
   useEffect(() => {
-    const fetchReservations = async () => {
-      try {
-        const response = await axios.get("http://localhost:5065/api/reservation");
-        const reservations: ReservationFromBackend[] = response.data;
-
-        const events: ReservationEvent[] = reservations.flatMap((r) => {
-          const base = {
-            id: r.id.toString(),
-            start: r.startTime,
-            end: r.endTime,
-            type: r.type,
-            computerId: r.computerId,
-          };
-
-          if (r.type === "Room") {
-            return [
-              {
-                ...base,
-                title: "",
-                color: "rgba(235, 14, 62, 0.85)",
-                classNames: ["room-event"],
-                display: "background",
-              },
-            ];
-          }
-
-          if (r.type === "Computer") {
-            return [
-              {
-                ...base,
-                title: "",
-                color: "rgb(0, 16, 234)",
-                display: "background",
-              },
-            ];
-          }
-
-          return [];
-        });
-
-        setFetchedEvents(events);
-      } catch (error) {
-        console.error("Error fetching reservations:", error);
-      }
-    };
-
-    fetchReservations();
+    fetchReservations(); // kutsu sitä täällä
   }, []);
-
-  const handleDateClick = (clickInfo: DateClickArg) => {
+  const fetchReservations = async () => {
+    try {
+      const response = await axios.get("http://localhost:5065/api/reservation");
+      const reservations: ReservationFromBackend[] = response.data;
+  
+      const events: ReservationEvent[] = reservations.flatMap((r) => {
+        const base = {
+          id: r.id.toString(),
+          start: r.startTime,
+          end: r.endTime,
+          type: r.type,
+          computerId: r.computerId,
+        };
+  
+        if (r.type === "Room") {
+          return [{
+            ...base,
+            title: "",
+            color: "rgba(235, 14, 62, 0.85)",
+            classNames: ["room-event"],
+            display: "background",
+          }];
+        }
+  
+        if (r.type === "Computer") {
+          return [{
+            ...base,
+            title: "",
+            color: "rgb(0, 16, 234)",
+            display: "background",
+          }];
+        }
+  
+        return [];
+      });
+  
+      setFetchedEvents(events);
+    } catch (error) {
+      console.error("Error fetching reservations:", error);
+    }
+  };  const handleDateClick = (clickInfo: DateClickArg) => {
     const selectedStart = new Date(clickInfo.date);
     const selectedEnd = new Date(selectedStart.getTime() + 60 * 60 * 1000);
 
@@ -257,6 +250,7 @@ export default function CalendarComponent() {
         computerId={computerId}
         setComputerId={setComputerId}
         fetchedEvents={fetchedEvents}
+        fetchReservations={fetchReservations}
       />
     </div>
   );

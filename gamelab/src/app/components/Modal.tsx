@@ -24,6 +24,7 @@ interface ModalProps {
     type?: "Computer" | "Room";
     computerId?: number;
   }[];
+  fetchReservations: () => void; // 🔄 lisätty
 }
 
 export default function Modal({
@@ -36,10 +37,10 @@ export default function Modal({
   computerId,
   setComputerId,
   fetchedEvents,
+  fetchReservations,
 }: ModalProps) {
   const [reservationType, setReservationType] = useState<"Computer" | "Room">("Computer");
 
-  // 🔄 Laske vapaat koneet ja voiko varata koko huoneen
   const { availableComputers, canReserveRoom } = useMemo(() => {
     if (selectedTimes.length === 0) return { availableComputers: [], canReserveRoom: false };
 
@@ -71,9 +72,9 @@ export default function Modal({
 
     return { availableComputers, canReserveRoom };
   }, [selectedTimes, fetchedEvents]);
+
   const userJson = localStorage.getItem("user");
   const user: User | null = userJson ? JSON.parse(userJson) : null;
-  
 
   const handleSaveReservation = async () => {
     if (!reservationName || (reservationType === "Computer" && !computerId)) {
@@ -84,13 +85,13 @@ export default function Modal({
       alert("Käyttäjätietoja ei löytynyt!");
       return;
     }
-    //Varmistetaan että aikajakso on järjestyksessä
+
     const sortedTimes = [...selectedTimes].sort(
       (a, b) => new Date(a.start).getTime() - new Date(b.start).getTime()
     );
 
     const newReservation: Reservation = {
-      userId: user.id, //Käytetään user.id:tä localstoragesta
+      userId: user.id,
       description: reservationName,
       type: reservationType,
       startTime: sortedTimes[0].start,
@@ -101,7 +102,7 @@ export default function Modal({
 
     try {
       await createReservationApi(newReservation);
-      alert("Varaus onnistui!");
+      await fetchReservations(); // 🔄 päivitys
       setSelectedTimes([]);
       setReservationName("");
       setComputerId(0);
@@ -190,7 +191,6 @@ export default function Modal({
           </button>
           <button
             onClick={handleSaveReservation}
-            
             className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
           >
             📌 Tallenna varaus
