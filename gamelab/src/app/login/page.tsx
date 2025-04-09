@@ -1,18 +1,15 @@
-
-
 "use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import {
-  requestLoginCodeApi,
-  
-} from "@/app/services/apiService";
-
+import { requestLoginCodeApi } from "@/app/services/apiService";
+import {User} from '@/app/models/userModel';
 const LoginPage = () => {
   const [email, setEmail] = useState("");
+  const [generatedCode, setGeneratedCode] = useState("");
   const [enteredCode, setEnteredCode] = useState("");
   const [showCodeInput, setShowCodeInput] = useState(false);
+  const [user, setUser] = useState<User>();
   const [error, setError] = useState("");
   const router = useRouter();
 
@@ -28,7 +25,9 @@ const LoginPage = () => {
 
     try {
       const user = await requestLoginCodeApi(email);
-      localStorage.setItem("user", JSON.stringify(user));
+
+      setGeneratedCode(user.oneTimeCode);
+      setUser(user);
       setShowCodeInput(true);
       alert(`🔐 Kirjautumiskoodisi on: ${user.oneTimeCode}`);
     } catch {
@@ -39,10 +38,17 @@ const LoginPage = () => {
   const handleCodeSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
-  
-    const user = JSON.parse(localStorage.getItem("user") || "{}");
-  
-    if (enteredCode === user.oneTimeCode) {
+     //Jos syötetty koodi on oikein, tallennetaan tiedot
+     //localstorageen ja siirrytään dashboardiin
+    if (enteredCode === generatedCode) {
+      localStorage.setItem(
+        "user",
+        JSON.stringify({
+          id: user?.id,
+          email: user?.email,
+          username: user?.username,
+        })
+      );
       router.push("/dashboard");
     } else {
       setError("❌ Väärä kirjautumiskoodi");
@@ -83,6 +89,7 @@ const LoginPage = () => {
               type="email"
               id="email"
               value={email}
+              disabled={showCodeInput}//Piilottaan email-kentä, kirjautumiskoodin syöttövaiheessa
               onChange={(e) => setEmail(e.target.value)}
               className="w-full p-2 border border-black rounded text-black"
               required
