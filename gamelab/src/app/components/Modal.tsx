@@ -71,6 +71,9 @@ export default function Modal({
 
     return { availableComputers, canReserveRoom };
   }, [selectedTimes, fetchedEvents]);
+  const userJson = localStorage.getItem("user");
+  const user: User | null = userJson ? JSON.parse(userJson) : null;
+  
 
   const handleSaveReservation = async () => {
     if (!reservationName || (reservationType === "Computer" && !computerId)) {
