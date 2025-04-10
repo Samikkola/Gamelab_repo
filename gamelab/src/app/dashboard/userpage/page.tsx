@@ -66,7 +66,12 @@ export default function UserReservationsPage() {
                 </p>
 
                 {/* 🔹 Näytetään tyyppi */}
-                <p className="text-sm text-gray-500">Tyyppi: {reservation.type}</p>
+                <p className="text-sm text-gray-500">
+                  Tyyppi: {reservation.type}
+                  {reservation.type === "Computer" && reservation.computerId && (
+                    <> (PC-{reservation.computerId})</>
+                  )}
+</p>
               </div>
 
               {/* 🔹 Linkki muokkaussivulle */}

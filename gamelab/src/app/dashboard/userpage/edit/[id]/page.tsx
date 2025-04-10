@@ -81,11 +81,16 @@ export default function EditReservationPage() {
           </p>
         </div>
 
-        {/* 🔹 Varaustyyppi */}
         <div>
           <p className="font-semibold text-lg">Tyyppi:</p>
-          <p className="text-gray-800">{reservation.type}</p>
-        </div>
+          <p className="text-gray-800">
+            {reservation.type}
+            {reservation.type === "Computer" && reservation.computerId && (
+              <> (PC-{reservation.computerId})</>
+            )}
+          </p>
+      </div>
+
       </div>
 
       {/* 🔹 Painikkeet */}
