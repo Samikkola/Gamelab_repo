@@ -65,7 +65,7 @@ export default function CalendarComponent() {
           return [{
             ...base,
             title: "",
-            color: "rgba(235, 14, 62, 0.85)",
+            color: "rgba(252, 59, 0, 0.87)",
             classNames: ["room-event"],
             display: "background",
           }];
@@ -75,7 +75,7 @@ export default function CalendarComponent() {
           return [{
             ...base,
             title: "",
-            color: "rgb(0, 16, 234)",
+            color: "rgb(44, 2, 169)",
             display: "background",
           }];
         }
