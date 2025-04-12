@@ -3,7 +3,9 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { createUserApi } from "@/app/services/apiService";
-import {User} from "@/app/models/userModel";
+import { User } from "@/app/models/userModel";
+import axios from "axios";
+
 export default function RegisterPage() {
   const router = useRouter();
   const [username, setUsername] = useState("");
@@ -40,9 +42,14 @@ export default function RegisterPage() {
       setUser(user);
       setShowCodeInput(true);
       alert(`🔐 Kirjautumiskoodisi on: ${user.oneTimeCode}`);
-    } catch (err) {
-      setError("Rekisteröinti epäonnistui.");
-      console.error("❌ Rekisteröinti virhe:", err);
+    } catch (error: unknown) {
+      //Haetaan backendin virheviesti
+      if (axios.isAxiosError(error) && error.response?.status === 400) {
+        const errorMessage = (error.response.data as { message: string }).message;
+        setError(errorMessage)
+      } else {
+        setError("Tapahtui virhe. Yritä uudelleen.");
+      }
     }
   };
 
@@ -100,7 +107,7 @@ export default function RegisterPage() {
               type="email"
               id="email"
               value={email}
-              disabled={showCodeInput}//Piilottaan email-kentä, kirjautumiskoodin syöttövaiheessa
+              disabled={showCodeInput} //Piilottaan email-kentä, kirjautumiskoodin syöttövaiheessa
               onChange={(e) => setEmail(e.target.value)}
               className="w-full p-2 border border-black rounded text-black"
               required
@@ -115,7 +122,7 @@ export default function RegisterPage() {
               type="text"
               id="username"
               value={username}
-              disabled={showCodeInput}//Piilottaan username-kentä, kirjautumiskoodin syöttövaiheessa
+              disabled={showCodeInput} //Piilottaan username-kentä, kirjautumiskoodin syöttövaiheessa
               onChange={(e) => setUsername(e.target.value)}
               className="w-full p-2 border border-black rounded text-black"
               required
