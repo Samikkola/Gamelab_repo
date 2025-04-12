@@ -12,6 +12,7 @@ export default function LandingPage() {
             src="/images/image.png"
             alt="Gamelab Logo"
             fill
+            sizes="fill"
             className="object-contain"
             priority
           />

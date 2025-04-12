@@ -12,7 +12,8 @@ export default function Header() {
         <Image
           src="/images/image.png"      // Kuvan polku public-kansiosta
           alt="Gamelab Logo"           // Alt-teksti saavutettavuutta varten
-          fill                         // Täyttää koko wrapperin
+          fill                       // Täyttää koko wrapperin
+          sizes="Fill"                 // Tyyliin sopiva koko 
           className="object-contain"   // Skaalaa niin että kuva ei leikkaannu
           priority                     // Ladataan etusijalla
         />
