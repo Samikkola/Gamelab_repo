@@ -124,6 +124,16 @@ namespace gamelab.src.server.Controllers
             {
                 return BadRequest(ModelState);
             }
+            
+            if (await _context.Users.AnyAsync(u => u.Email == dto.Email))
+            {
+                return BadRequest(new { message ="Sähköposti on jo rekisteröity." });
+            }
+
+            if (await _context.Users.AnyAsync(u => u.Username == dto.Username))
+            {
+                return BadRequest(new { message ="Käyttäjänimi on jo käytössä." });
+            }
 
             // Generoidaan 8-merkkinen kertakäyttökoodi
             var oneTimeCode = Guid.NewGuid().ToString("N").Substring(0, 8);

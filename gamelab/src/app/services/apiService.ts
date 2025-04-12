@@ -31,7 +31,7 @@ export const createUserApi = async (userData: {
     return response.data;
   } catch (error) {
     console.error("❌ Virhe käyttäjän luonnissa:", error);
-    throw new Error("Käyttäjän luominen epäonnistui");
+    throw error;
   }
 };
 
