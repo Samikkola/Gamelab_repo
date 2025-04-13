@@ -9,8 +9,13 @@ export default {
   theme: {
     extend: {
       colors: {
+        // Käytössä olevat CSS-muuttujat
         background: "var(--background)",
         foreground: "var(--foreground)",
+        xamkYellow: "#fdb92a",
+
+        // 🔸 Uusi mukautettu väri nimeltä 'xamkYellow'
+        
       },
     },
   },

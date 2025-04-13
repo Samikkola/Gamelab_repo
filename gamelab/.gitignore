@@ -39,3 +39,10 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Config files
+appsettings.Development.json
+
+# ✅ .NET build-kansiot
+obj/
+bin/
