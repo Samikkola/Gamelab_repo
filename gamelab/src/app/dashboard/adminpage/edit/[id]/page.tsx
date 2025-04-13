@@ -1,101 +1,120 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter, useParams } from "next/navigation";
+import { useEffect, useState } from "react";
+import { useParams, useRouter } from "next/navigation";
 
-// 🔹 Esimerkkidata varauksista
-const dummyReservations = [
-  { id: 1, user: "Matti", name: "Varattu pelihuone 1", date: "2024-03-15", time: "14:00 - 16:00" },
-  { id: 2, user: "Matti", name: "Varattu pelihuone 2", date: "2024-03-18", time: "12:00 - 14:00" },
-  { id: 3, user: "Laura", name: "Varattu pelihuone 3", date: "2024-03-19", time: "10:00 - 12:00" },
-  { id: 4, user: "Pekka", name: "Varattu VR-huone", date: "2024-03-20", time: "16:00 - 18:00" },
-];
+type Reservation = {
+  id: number;
+  description: string;
+  startTime: string;
+  endTime: string;
+  type: "Computer" | "Room";
+  computerId?: number;
+  username?: string;
+  email?: string;
+};
 
-export default function EditReservationPage() {
+export default function AdminEditReservationPage() {
+  const { id } = useParams();
   const router = useRouter();
-  const { id } = useParams(); // Saa varauksen ID:n URLista
+  const [reservation, setReservation] = useState<Reservation | null>(null);
+  const [loading, setLoading] = useState(true);
 
-  // Haetaan varaus listasta ID:n perusteella
-  const reservation = dummyReservations.find((res) => res.id === Number(id));
+  useEffect(() => {
+    const fetchReservation = async () => {
+      try {
+        const res = await fetch("http://localhost:5065/api/admin/reservations");
+        const data = await res.json();
+        const found = data.find((r: Reservation) => r.id === Number(id));
+        setReservation(found || null);
+      } catch (error) {
+        console.error("Virhe haettaessa varausta:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  const [formData, setFormData] = useState({
-    name: reservation?.name || "",
-    date: reservation?.date || "",
-    time: reservation?.time || "",
-    user: reservation?.user || "",
-  });
+    fetchReservation();
+  }, [id]);
 
-  if (!reservation) {
-    return <p>Varausta ei löydy.</p>;
-  }
+  const handleDelete = async () => {
+    if (!confirm("Haluatko varmasti poistaa tämän varauksen?")) return;
 
-  // 🔹 Käsitellään lomakkeen muokkaus
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    try {
+      await fetch(`http://localhost:5065/api/user/${id}`, {
+        method: "DELETE",
+      });
+      router.push("/dashboard/adminpage");
+    } catch (error) {
+      console.error("Poisto epäonnistui:", error);
+      alert("Poisto epäonnistui.");
+    }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log("Päivitetty varaus:", formData);
-    router.push("/dashboard/adminpage"); // Palautetaan käyttäjä admin-sivulle
-  };
+  if (loading) return <p>Ladataan...</p>;
+  if (!reservation) return <p>Varausta ei löytynyt.</p>;
 
   return (
-    <div className="p-6">
-      <h1 className="text-3xl text-black font-bold mb-4">Muokkaa varausta</h1>
+    <div className="p-6 max-w-lg mx-auto">
+      <h1 className="text-3xl text-black font-bold mb-6">Varaus (Admin)</h1>
 
-      <form onSubmit={handleSubmit} className="bg-gray-400 p-4 rounded-lg space-y-4">
-        <label className="block">
-          Nimi:
-          <input
-            type="text"
-            name="name"
-            value={formData.name}
-            onChange={handleChange}
-            className="w-full p-2 border rounded"
-          />
-        </label>
+      <div className="space-y-4 bg-gray-200 p-4 rounded text-black">
+        <div>
+          <p className="font-semibold text-lg">Nimi:</p>
+          <p className="text-gray-800">
+            {reservation.description?.trim() || "(Ei nimeä)"}
+          </p>
+        </div>
 
-        <label className="block">
-          Päivämäärä:
-          <input
-            type="date"
-            name="date"
-            value={formData.date}
-            onChange={handleChange}
-            className="w-full p-2 border rounded"
-          />
-        </label>
+        <div>
+          <p className="font-semibold text-lg">Aika:</p>
+          <p className="text-gray-800">
+            {new Date(reservation.startTime).toLocaleString("fi-FI", {
+              day: "numeric",
+              month: "long",
+              hour: "2-digit",
+              minute: "2-digit",
+            })}{" "}
+            –{" "}
+            {new Date(reservation.endTime).toLocaleTimeString("fi-FI", {
+              hour: "2-digit",
+              minute: "2-digit",
+            })}
+          </p>
+        </div>
 
-        <label className="block">
-          Aika:
-          <input
-            type="text"
-            name="time"
-            value={formData.time}
-            onChange={handleChange}
-            className="w-full p-2 border rounded"
-          />
-        </label>
+        <div>
+          <p className="font-semibold text-lg">Tyyppi:</p>
+          <p className="text-gray-800">
+            {reservation.type}
+            {reservation.type === "Computer" && reservation.computerId && (
+              <> (PC-{reservation.computerId})</>
+            )}
+          </p>
+        </div>
 
-        <label className="block">
-          Käyttäjä:
-          <input
-            type="text"
-            name="user"
-            value={formData.user}
-            onChange={handleChange}
-            className="w-full p-2 border rounded"
-          />
-        </label>
+        <div>
+          <p className="font-semibold text-lg">Varaajan tiedot:</p>
+          <p className="text-sm text-gray-500 italic">
+            {reservation.username ?? "(Tuntematon käyttäjä)"} – {reservation.email ?? "(ei sähköpostia)"}
+          </p>
+        </div>
+      </div>
 
+      <div className="flex justify-between mt-6">
         <button
-          type="submit"
-          className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
+          onClick={() => router.push("/dashboard/adminpage")}
+          className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600"
         >
-          Tallenna muutokset
+          Takaisin
         </button>
-      </form>
+        <button
+          onClick={handleDelete}
+          className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
+        >
+          Poista varaus
+        </button>
+      </div>
     </div>
   );
 }

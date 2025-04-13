@@ -13,10 +13,12 @@ var builder = WebApplication.CreateBuilder(args);
 Env.Load();
 
 //Lisätään kontrollerit ja Json sterilisaatio ( enum -> string)
+//Se estää äärettömien silmukoiden (circular references) syntymisen JSON-serialisoinnissa.
 builder.Services
     .AddControllers()
     .AddJsonOptions(options =>
     {
+        options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
         options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
     });
 
