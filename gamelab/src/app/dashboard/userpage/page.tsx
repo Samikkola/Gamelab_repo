@@ -61,7 +61,7 @@ export default function UserReservationsPage() {
 
                 {/* 🔹 Näytetään ajankohta */}
                 <p className="text-sm text-gray-700">
-                  {new Date(reservation.startTime).toLocaleString("fi-FI",{ hour: "2-digit", minute: "2-digit" })} –{" "}
+                  {new Date(reservation.startTime).toLocaleString("fi-FI",{ day: "numeric", month: "long", hour: "2-digit", minute: "2-digit" })} –{" "}
                   {new Date(reservation.endTime).toLocaleTimeString("fi-FI",{ hour: "2-digit", minute: "2-digit" })}
                 </p>
 

@@ -76,7 +76,7 @@ export default function EditReservationPage() {
         <div>
           <p className="font-semibold text-lg">Aika:</p>
           <p className="text-gray-800">
-            {new Date(reservation.startTime).toLocaleString("fi-FI",{ hour: "2-digit", minute: "2-digit" })} –{" "}
+            {new Date(reservation.startTime).toLocaleString("fi-FI",{ day:"numeric", month: "long", hour: "2-digit", minute: "2-digit" })} –{" "}
             {new Date(reservation.endTime).toLocaleTimeString("fi-FI",{ hour: "2-digit", minute: "2-digit" })}
           </p>
         </div>
