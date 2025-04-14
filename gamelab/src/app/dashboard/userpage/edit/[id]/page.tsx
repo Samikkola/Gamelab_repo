@@ -25,7 +25,7 @@ export default function EditReservationPage() {
       try {
         const storedUser = localStorage.getItem("user");
         if (!storedUser) return;
-
+        //TODO:Api vaihdettava apiService-kansioon
         const user = JSON.parse(storedUser);
         const res = await fetch(`http://localhost:5065/api/user/${user.id}`);
         const data = await res.json();

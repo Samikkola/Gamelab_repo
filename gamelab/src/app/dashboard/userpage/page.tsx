@@ -22,7 +22,7 @@ export default function UserReservationsPage() {
     const fetchReservations = async () => {
       const storedUser = localStorage.getItem("user");
       if (!storedUser) return;
-
+      //TODO:Api vaihdettava apiService-kansioon
       const user = JSON.parse(storedUser);
       try {
         const res = await fetch(`http://localhost:5065/api/user/${user.id}`);

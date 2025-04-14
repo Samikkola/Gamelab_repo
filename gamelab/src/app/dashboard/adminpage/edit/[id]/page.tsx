@@ -20,6 +20,7 @@ export default function AdminEditReservationPage() {
   const [reservation, setReservation] = useState<Reservation | null>(null);
   const [loading, setLoading] = useState(true);
 
+  //TODO:Api vaihdettava apiService-kansioon
   useEffect(() => {
     const fetchReservation = async () => {
       try {
