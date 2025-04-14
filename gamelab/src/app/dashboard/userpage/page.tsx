@@ -22,7 +22,7 @@ export default function UserReservationsPage() {
     const fetchReservations = async () => {
       const storedUser = localStorage.getItem("user");
       if (!storedUser) return;
-
+      //TODO:Api vaihdettava apiService-kansioon
       const user = JSON.parse(storedUser);
       try {
         const res = await fetch(`http://localhost:5065/api/user/${user.id}`);
@@ -61,7 +61,7 @@ export default function UserReservationsPage() {
 
                 {/* 🔹 Näytetään ajankohta */}
                 <p className="text-sm text-gray-700">
-                  {new Date(reservation.startTime).toLocaleString("fi-FI",{ hour: "2-digit", minute: "2-digit" })} –{" "}
+                  {new Date(reservation.startTime).toLocaleString("fi-FI",{ day: "numeric", month: "long", hour: "2-digit", minute: "2-digit" })} –{" "}
                   {new Date(reservation.endTime).toLocaleTimeString("fi-FI",{ hour: "2-digit", minute: "2-digit" })}
                 </p>
 

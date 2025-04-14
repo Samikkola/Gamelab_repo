@@ -25,7 +25,7 @@ export default function EditReservationPage() {
       try {
         const storedUser = localStorage.getItem("user");
         if (!storedUser) return;
-
+        //TODO:Api vaihdettava apiService-kansioon
         const user = JSON.parse(storedUser);
         const res = await fetch(`http://localhost:5065/api/user/${user.id}`);
         const data = await res.json();
@@ -76,7 +76,7 @@ export default function EditReservationPage() {
         <div>
           <p className="font-semibold text-lg">Aika:</p>
           <p className="text-gray-800">
-            {new Date(reservation.startTime).toLocaleString("fi-FI",{ hour: "2-digit", minute: "2-digit" })} –{" "}
+            {new Date(reservation.startTime).toLocaleString("fi-FI",{ day:"numeric", month: "long", hour: "2-digit", minute: "2-digit" })} –{" "}
             {new Date(reservation.endTime).toLocaleTimeString("fi-FI",{ hour: "2-digit", minute: "2-digit" })}
           </p>
         </div>
