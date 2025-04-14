@@ -1,54 +1,81 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 
-// 🔹 Esimerkkidata varauksista (tämä voidaan korvata tietokannalla myöhemmin)
-const dummyReservations = [
-  { id: 1, user: "Matti", name: "Varattu pelihuone 1", date: "2024-03-15", time: "14:00 - 16:00" },
-  { id: 2, user: "Matti", name: "Varattu pelihuone 2", date: "2024-03-18", time: "12:00 - 14:00" },
-  { id: 3, user: "Laura", name: "Varattu pelihuone 3", date: "2024-03-19", time: "10:00 - 12:00" },
-  { id: 4, user: "Pekka", name: "Varattu VR-huone", date: "2024-03-20", time: "16:00 - 18:00" },
-];
+type AdminReservation = {
+  id: number;
+  description: string;
+  startTime: string;
+  endTime: string;
+  type: string;
+  username?: string;
+  email?: string;
+};
 
-export default function AdminPage() {
-  const [reservations, setReservations] = useState(dummyReservations);
-  const [filter, setFilter] = useState("");
+export default function AdminReservationsPage() {
+  const [reservations, setReservations] = useState<AdminReservation[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  // 🔹 Suodatetaan varaukset käyttäjän nimen perusteella
-  const filteredReservations = reservations.filter((res) =>
-    res.user.toLowerCase().includes(filter.toLowerCase())
-  );
+  useEffect(() => {
+    const fetchReservations = async () => {
+      try {
+        const res = await fetch("http://localhost:5065/api/admin/reservations");
+        const data = await res.json();
+        setReservations(data);
+      } catch (error) {
+        console.error("Virhe haettaessa varauksia:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchReservations();
+  }, []);
 
   return (
     <div className="p-6">
-      <h1 className="text-3xl text-black font-bold mb-6">Admin - Varausten hallinta</h1>
+      <h1 className="text-3xl font-bold text-black mb-6">Admin – Kaikki varaukset</h1>
 
-      {/* 🔹 Suodatuslomake */}
-      <div className="mb-4">
-        <input
-          type="text"
-          placeholder="Etsi käyttäjän nimellä..."
-          value={filter}
-          onChange={(e) => setFilter(e.target.value)}
-          className="p-2 border border-gray-400 rounded w-full"
-        />
-      </div>
-
-      {/* 🔹 Näytetään varaukset */}
-      {filteredReservations.length === 0 ? (
+      {loading ? (
+        <p>Ladataan varauksia...</p>
+      ) : reservations.length === 0 ? (
         <p>Ei varauksia.</p>
       ) : (
         <ul className="space-y-4">
-          {filteredReservations.map((reservation) => (
-            <li key={reservation.id} className="p-4 bg-gray-400 rounded-lg flex justify-between">
+          {reservations.map((reservation) => (
+            <li
+              key={reservation.id}
+              className="p-4 bg-gray-200 rounded-lg text-black space-y-1 flex justify-between items-center"
+            >
               <div>
-                <p className="text-lg font-semibold">{reservation.name}</p>
-                <p className="text-gray-600">{reservation.date} klo {reservation.time}</p>
-                <p className="text-gray-800 font-semibold">Käyttäjä: {reservation.user}</p>
+                <p className="font-semibold text-lg">
+                  {reservation.description}
+                </p>
+
+                <p className="text-sm text-gray-700">
+                  {new Date(reservation.startTime).toLocaleString("fi-FI", {
+                    day: "numeric",
+                    month: "long",
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  })}{" "}
+                  –{" "}
+                  {new Date(reservation.endTime).toLocaleTimeString("fi-FI", {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  })}
+                </p>
+
+                <p className="text-sm text-gray-500">Tyyppi: {reservation.type}</p>
+
+                <p className="text-sm text-gray-500 italic">
+                  Varaaja: {reservation.username ?? "(tuntematon)"} –{" "}
+                  {reservation.email ?? "(ei sähköpostia)"}
+                </p>
               </div>
 
-              {/* 🔹 Muokkaa varaus -linkki */}
+              {/* 🔗 Linkki edit-sivulle */}
               <Link
                 href={`/dashboard/adminpage/edit/${reservation.id}`}
                 className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
